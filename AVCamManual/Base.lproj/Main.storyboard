@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="zFy-Vn-e8f">
+    <device id="retina6_72" orientation="portrait" appearance="dark"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Cam Manual Camera View Controller-->
+        <scene sceneID="o5M-B8-Hza">
+            <objects>
+                <viewController wantsFullScreenLayout="YES" modalPresentationStyle="fullScreen" id="zFy-Vn-e8f" customClass="AVCamManualCameraViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleAspectFit" preservesSuperviewLayoutMargins="YES" id="9Za-05-zwY" customClass="AVCamManualPreviewView">
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="fSz-dY-3y2">
+                                <rect key="frame" x="203" y="456.33333333333331" width="24" height="19.666666666666686"/>
+                                <color key="tintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            </imageView>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gwL-zO-1Pw">
+                                <rect key="frame" x="139" y="484" width="152" height="41"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Tap to Resume">
+                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="resumeInterruptedSession:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="7GG-E1-MyM"/>
+                                </connections>
+                            </button>
+                            <view opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="amH-FF-rBy" userLabel="Manual HUD">
+                                <rect key="frame" x="12" y="59" width="406" height="839"/>
+                                <subviews>
+                                    <segmentedControl opaque="NO" contentMode="scaleAspectFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="543-NV-2bk">
+                                        <rect key="frame" x="8" y="8" width="390" height="43"/>
+                                        <color key="backgroundColor" systemColor="systemFillColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="42" id="zbX-uC-FJk"/>
+                                        </constraints>
+                                        <segments>
+                                            <segment title="">
+                                                <imageReference key="image" image="bolt.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                    <hierarchicalColors>
+                                                        <color systemColor="systemYellowColor"/>
+                                                        <color systemColor="systemBlueColor"/>
+                                                        <color systemColor="tertiaryLabelColor"/>
+                                                    </hierarchicalColors>
+                                                </imageReference>
+                                            </segment>
+                                            <segment title="">
+                                                <imageReference key="image" image="viewfinder.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                    <hierarchicalColors>
+                                                        <color systemColor="systemYellowColor"/>
+                                                        <color systemColor="systemBlueColor"/>
+                                                        <color systemColor="tertiaryLabelColor"/>
+                                                    </hierarchicalColors>
+                                                </imageReference>
+                                            </segment>
+                                            <segment title="">
+                                                <imageReference key="image" image="timer" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                    <hierarchicalColors>
+                                                        <color systemColor="systemYellowColor"/>
+                                                        <color systemColor="systemBlueColor"/>
+                                                        <color systemColor="tertiaryLabelColor"/>
+                                                    </hierarchicalColors>
+                                                </imageReference>
+                                            </segment>
+                                            <segment title="">
+                                                <imageReference key="image" image="magnifyingglass.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                    <hierarchicalColors>
+                                                        <color systemColor="systemYellowColor"/>
+                                                        <color systemColor="systemBlueColor"/>
+                                                        <color systemColor="tertiaryLabelColor"/>
+                                                    </hierarchicalColors>
+                                                </imageReference>
+                                            </segment>
+                                            <segment title="">
+                                                <imageReference key="image" image="camera.filters" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                    <hierarchicalColors>
+                                                        <color systemColor="systemYellowColor"/>
+                                                        <color systemColor="systemBlueColor"/>
+                                                        <color white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </hierarchicalColors>
+                                                </imageReference>
+                                            </segment>
+                                        </segments>
+                                        <color key="tintColor" systemColor="systemYellowColor"/>
+                                        <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
+                                        <connections>
+                                            <action selector="changeManualHUDSelection:" destination="zFy-Vn-e8f" eventType="valueChanged" id="5XP-dx-s2O"/>
+                                        </connections>
+                                    </segmentedControl>
+                                    <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Akx-Oj-5Sj" userLabel="Controls View">
+                                        <rect key="frame" x="8" y="50" width="390" height="781"/>
+                                        <subviews>
+                                            <view hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XXb-cy-BED" userLabel="ManualHUD Torch Level View">
+                                                <rect key="frame" x="8" y="8" width="374" height="765"/>
+                                                <subviews>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VNK-3C-FPF">
+                                                        <rect key="frame" x="6" y="8" width="362" height="91"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="90" id="YNZ-Ed-S6o"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="light.min" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <imageReference key="maximumValueImage" image="light.max" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <color key="minimumTrackTintColor" systemColor="systemYellowColor"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
+                                                        <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <connections>
+                                                            <action selector="changeTorchLevel:" destination="zFy-Vn-e8f" eventType="valueChanged" id="MLb-zA-9XB"/>
+                                                        </connections>
+                                                    </slider>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="VNK-3C-FPF" firstAttribute="trailing" secondItem="XXb-cy-BED" secondAttribute="trailingMargin" id="9UM-9m-OFU"/>
+                                                    <constraint firstItem="VNK-3C-FPF" firstAttribute="leading" secondItem="XXb-cy-BED" secondAttribute="leadingMargin" id="VOI-UB-2f8"/>
+                                                    <constraint firstItem="VNK-3C-FPF" firstAttribute="top" secondItem="XXb-cy-BED" secondAttribute="topMargin" id="qH2-7l-YR1"/>
+                                                </constraints>
+                                            </view>
+                                            <view hidden="YES" opaque="NO" alpha="0.0" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MDr-ZD-uoq">
+                                                <rect key="frame" x="8" y="8" width="374" height="765"/>
+                                                <subviews>
+                                                    <slider opaque="NO" contentMode="scaleToFill" highlighted="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="TV0-Z0-OUU">
+                                                        <rect key="frame" x="6" y="68" width="362" height="61"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="CXK-w2-L48"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="camera.metering.none" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <imageReference key="maximumValueImage" image="camera.metering.multispot" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <color key="minimumTrackTintColor" systemColor="systemYellowColor"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
+                                                        <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <connections>
+                                                            <action selector="changeLensPosition:" destination="zFy-Vn-e8f" eventType="valueChanged" id="0nI-xS-4od"/>
+                                                            <action selector="magnifyLensPositionSlider:forEvent:" destination="zFy-Vn-e8f" eventType="touchDownRepeat" id="0fy-LC-plF"/>
+                                                            <action selector="restoreLensSlider:forEvent:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="Xk7-cx-RhQ"/>
+                                                            <action selector="restoreLensSlider_:forEvent:" destination="zFy-Vn-e8f" eventType="touchUpOutside" id="1f5-jQ-xJc"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <segmentedControl opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
+                                                        <rect key="frame" x="8" y="8" width="358" height="57"/>
+                                                        <color key="backgroundColor" systemColor="systemFillColor"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="56" id="od8-lO-gXr"/>
+                                                        </constraints>
+                                                        <segments>
+                                                            <segment title="">
+                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                    <hierarchicalColors>
+                                                                        <color systemColor="systemYellowColor"/>
+                                                                        <color systemColor="systemBlueColor"/>
+                                                                        <color systemColor="tertiaryLabelColor"/>
+                                                                    </hierarchicalColors>
+                                                                </imageReference>
+                                                            </segment>
+                                                            <segment title="">
+                                                                <imageReference key="image" image="lock.rotation" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                    <hierarchicalColors>
+                                                                        <color systemColor="systemYellowColor"/>
+                                                                        <color systemColor="systemBlueColor"/>
+                                                                        <color systemColor="tertiaryLabelColor"/>
+                                                                    </hierarchicalColors>
+                                                                </imageReference>
+                                                            </segment>
+                                                        </segments>
+                                                        <color key="tintColor" red="0.99942404029999998" green="0.98555368190000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
+                                                        <connections>
+                                                            <action selector="changeFocusMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="JyB-vH-3jA"/>
+                                                        </connections>
+                                                    </segmentedControl>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="TV0-Z0-OUU" firstAttribute="leading" secondItem="MDr-ZD-uoq" secondAttribute="leadingMargin" id="1nP-I5-3k7"/>
+                                                    <constraint firstItem="TV0-Z0-OUU" firstAttribute="top" secondItem="ktg-mg-Ejd" secondAttribute="bottomMargin" constant="12" id="AAw-6E-FC9"/>
+                                                    <constraint firstItem="TV0-Z0-OUU" firstAttribute="trailing" secondItem="MDr-ZD-uoq" secondAttribute="trailingMargin" id="Ifl-md-MCW"/>
+                                                    <constraint firstItem="ktg-mg-Ejd" firstAttribute="leading" secondItem="MDr-ZD-uoq" secondAttribute="leadingMargin" id="iW8-O7-7ZM"/>
+                                                    <constraint firstItem="ktg-mg-Ejd" firstAttribute="top" secondItem="MDr-ZD-uoq" secondAttribute="topMargin" id="x04-Jr-P58"/>
+                                                    <constraint firstItem="ktg-mg-Ejd" firstAttribute="trailing" secondItem="MDr-ZD-uoq" secondAttribute="trailingMargin" id="x3c-m1-etO"/>
+                                                </constraints>
+                                            </view>
+                                            <view hidden="YES" opaque="NO" alpha="0.0" tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iQT-Nx-cHE">
+                                                <rect key="frame" x="8" y="8" width="374" height="765"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="woR-St-Erj">
+                                                        <rect key="frame" x="149" y="365" width="75" height="35"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <state key="normal" title="Button"/>
+                                                        <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                                    </button>
+                                                    <segmentedControl opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="vvO-Ky-Czn">
+                                                        <rect key="frame" x="8" y="8" width="358" height="57"/>
+                                                        <color key="backgroundColor" systemColor="systemFillColor"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="56" id="tCk-zN-ahQ"/>
+                                                        </constraints>
+                                                        <segments>
+                                                            <segment title="">
+                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                    <hierarchicalColors>
+                                                                        <color systemColor="systemYellowColor"/>
+                                                                        <color systemColor="systemBlueColor"/>
+                                                                        <color systemColor="tertiaryLabelColor"/>
+                                                                    </hierarchicalColors>
+                                                                </imageReference>
+                                                            </segment>
+                                                            <segment title="">
+                                                                <imageReference key="image" image="lock.open.rotation" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                    <hierarchicalColors>
+                                                                        <color systemColor="systemYellowColor"/>
+                                                                        <color systemColor="systemBlueColor"/>
+                                                                        <color systemColor="tertiaryLabelColor"/>
+                                                                    </hierarchicalColors>
+                                                                </imageReference>
+                                                            </segment>
+                                                        </segments>
+                                                        <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
+                                                        <connections>
+                                                            <action selector="changeExposureMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="F9j-by-cki"/>
+                                                        </connections>
+                                                    </segmentedControl>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="7R6-CN-WmZ">
+                                                        <rect key="frame" x="6" y="56" width="362" height="61"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="r4m-iW-fZW"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="timer.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <imageReference key="maximumValueImage" image="timer.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <color key="minimumTrackTintColor" systemColor="systemYellowColor"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
+                                                        <connections>
+                                                            <action selector="changeExposureDuration:" destination="zFy-Vn-e8f" eventType="valueChanged" id="fAn-ix-8Bt"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="eau-wv-dU0">
+                                                        <rect key="frame" x="6" y="108" width="362" height="61"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="7UD-sH-Uz2"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="camera.aperture" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <imageReference key="maximumValueImage" image="camera.aperture" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <color key="minimumTrackTintColor" systemColor="systemYellowColor"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
+                                                        <connections>
+                                                            <action selector="changeISO:" destination="zFy-Vn-e8f" eventType="valueChanged" id="8aT-Q3-NNU"/>
+                                                        </connections>
+                                                    </slider>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="vvO-Ky-Czn" firstAttribute="leading" secondItem="iQT-Nx-cHE" secondAttribute="leadingMargin" id="6ZM-Az-UC1"/>
+                                                    <constraint firstItem="vvO-Ky-Czn" firstAttribute="trailing" secondItem="iQT-Nx-cHE" secondAttribute="trailingMargin" id="JFk-ws-qIe"/>
+                                                    <constraint firstItem="7R6-CN-WmZ" firstAttribute="leading" secondItem="iQT-Nx-cHE" secondAttribute="leadingMargin" id="X6h-jR-nnM"/>
+                                                    <constraint firstItem="vvO-Ky-Czn" firstAttribute="top" secondItem="iQT-Nx-cHE" secondAttribute="topMargin" id="any-dP-6yF"/>
+                                                    <constraint firstItem="7R6-CN-WmZ" firstAttribute="top" secondItem="vvO-Ky-Czn" secondAttribute="bottomMargin" id="f0N-9x-Lf9"/>
+                                                    <constraint firstItem="eau-wv-dU0" firstAttribute="top" secondItem="7R6-CN-WmZ" secondAttribute="bottomMargin" id="jRI-rV-vNr"/>
+                                                    <constraint firstItem="7R6-CN-WmZ" firstAttribute="trailing" secondItem="iQT-Nx-cHE" secondAttribute="trailingMargin" id="mSW-jl-B02"/>
+                                                    <constraint firstItem="eau-wv-dU0" firstAttribute="leading" secondItem="iQT-Nx-cHE" secondAttribute="leadingMargin" id="pQV-AO-HmD"/>
+                                                    <constraint firstItem="eau-wv-dU0" firstAttribute="trailing" secondItem="iQT-Nx-cHE" secondAttribute="trailingMargin" id="yT7-wd-Fz5"/>
+                                                </constraints>
+                                            </view>
+                                            <view hidden="YES" opaque="NO" alpha="0.0" tag="3" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tCR-0s-Q5n" userLabel="ManualHUD Video Zoom Factor View">
+                                                <rect key="frame" x="8" y="8" width="374" height="765"/>
+                                                <subviews>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="uyM-gg-aDC" userLabel="Zoom Factor Slider">
+                                                        <rect key="frame" x="6" y="8" width="362" height="91"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="90" id="Pqb-eP-5D0"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="minus.magnifyingglass" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <imageReference key="maximumValueImage" image="plus.magnifyingglass" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                            <hierarchicalColors>
+                                                                <color systemColor="systemYellowColor"/>
+                                                                <color systemColor="systemBlueColor"/>
+                                                                <color systemColor="tertiaryLabelColor"/>
+                                                            </hierarchicalColors>
+                                                        </imageReference>
+                                                        <color key="minimumTrackTintColor" systemColor="systemYellowColor"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
+                                                        <connections>
+                                                            <action selector="changeVideoZoomFactor:" destination="zFy-Vn-e8f" eventType="valueChanged" id="GCd-v8-rDm"/>
+                                                        </connections>
+                                                    </slider>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="uyM-gg-aDC" firstAttribute="top" secondItem="tCR-0s-Q5n" secondAttribute="topMargin" id="F7R-im-gnq"/>
+                                                    <constraint firstItem="uyM-gg-aDC" firstAttribute="trailing" secondItem="tCR-0s-Q5n" secondAttribute="trailingMargin" id="lJ7-4L-nkK"/>
+                                                    <constraint firstItem="uyM-gg-aDC" firstAttribute="leading" secondItem="tCR-0s-Q5n" secondAttribute="leadingMargin" id="or3-LI-E6P"/>
+                                                </constraints>
+                                            </view>
+                                            <view hidden="YES" opaque="NO" alpha="0.0" tag="4" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="puZ-nU-nwq" userLabel="ManualHUD White Balance View">
+                                                <rect key="frame" x="8" y="8" width="374" height="765"/>
+                                                <subviews>
+                                                    <segmentedControl opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Pez-TP-eVs">
+                                                        <rect key="frame" x="8" y="8" width="358" height="57"/>
+                                                        <color key="backgroundColor" systemColor="systemFillColor"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="56" id="ggH-6s-cER"/>
+                                                        </constraints>
+                                                        <segments>
+                                                            <segment title="">
+                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                    <hierarchicalColors>
+                                                                        <color systemColor="systemYellowColor"/>
+                                                                        <color systemColor="systemBlueColor"/>
+                                                                        <color systemColor="tertiaryLabelColor"/>
+                                                                    </hierarchicalColors>
+                                                                </imageReference>
+                                                            </segment>
+                                                            <segment title="">
+                                                                <imageReference key="image" image="lock.open.rotation" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                    <hierarchicalColors>
+                                                                        <color systemColor="systemYellowColor"/>
+                                                                        <color systemColor="systemBlueColor"/>
+                                                                        <color systemColor="tertiaryLabelColor"/>
+                                                                    </hierarchicalColors>
+                                                                </imageReference>
+                                                            </segment>
+                                                        </segments>
+                                                        <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
+                                                        <connections>
+                                                            <action selector="changeWhiteBalanceMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="Men-d7-LUF"/>
+                                                        </connections>
+                                                    </segmentedControl>
+                                                    <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="g5Y-v1-MKt">
+                                                        <rect key="frame" x="6" y="56" width="304.33333333333331" height="61"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="rXE-dO-ejJ"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="b.circle" catalog="system" symbolScale="large" renderingMode="hierarchical-single"/>
+                                                        <imageReference key="maximumValueImage" image="y.circle" catalog="system" symbolScale="large" renderingMode="hierarchical-single"/>
+                                                        <color key="minimumTrackTintColor" systemColor="systemYellowColor"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
+                                                        <connections>
+                                                            <action selector="changeTemperature:" destination="zFy-Vn-e8f" eventType="valueChanged" id="WCB-V6-W6N"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="c2O-fC-f8E">
+                                                        <rect key="frame" x="6" y="108" width="304.33333333333331" height="61"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="u8G-b5-90l"/>
+                                                        </constraints>
+                                                        <imageReference key="minimumValueImage" image="g.circle" catalog="system" symbolScale="large" renderingMode="hierarchical-single"/>
+                                                        <imageReference key="maximumValueImage" image="m.circle" catalog="system" symbolScale="large" renderingMode="hierarchical-single"/>
+                                                        <color key="minimumTrackTintColor" cyan="0.0" magenta="1" yellow="0.0" black="0.0" alpha="1" colorSpace="custom" customColorSpace="genericCMYKColorSpace"/>
+                                                        <color key="maximumTrackTintColor" systemColor="systemGreenColor"/>
+                                                        <connections>
+                                                            <action selector="changeTint:" destination="zFy-Vn-e8f" eventType="valueChanged" id="Cua-i3-F3g"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1XR-0K-p1z" userLabel="GrayWorld Button">
+                                                        <rect key="frame" x="300.33333333333331" y="56" width="65.666666666666686" height="110"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="110" id="DaQ-E3-lTS"/>
+                                                        </constraints>
+                                                        <state key="normal" title="Button"/>
+                                                        <buttonConfiguration key="configuration" style="plain">
+                                                            <imageReference key="image" image="circle.lefthalf.filled" catalog="system" symbolScale="large" renderingMode="hierarchical-single"/>
+                                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="28" scale="large"/>
+                                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                                        </buttonConfiguration>
+                                                        <connections>
+                                                            <action selector="lockWithGrayWorld:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="U4O-rD-Tzk"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="1XR-0K-p1z" firstAttribute="right" secondItem="puZ-nU-nwq" secondAttribute="rightMargin" id="5H2-77-w7b"/>
+                                                    <constraint firstItem="Pez-TP-eVs" firstAttribute="leading" secondItem="puZ-nU-nwq" secondAttribute="leadingMargin" id="F3U-NH-MAw"/>
+                                                    <constraint firstItem="c2O-fC-f8E" firstAttribute="trailing" secondItem="1XR-0K-p1z" secondAttribute="leadingMargin" id="HFc-iW-2jO"/>
+                                                    <constraint firstItem="g5Y-v1-MKt" firstAttribute="trailing" secondItem="1XR-0K-p1z" secondAttribute="leadingMargin" id="JJd-sM-kxk"/>
+                                                    <constraint firstItem="Pez-TP-eVs" firstAttribute="trailing" secondItem="puZ-nU-nwq" secondAttribute="trailingMargin" id="Xjd-Oh-OVr"/>
+                                                    <constraint firstItem="g5Y-v1-MKt" firstAttribute="left" secondItem="puZ-nU-nwq" secondAttribute="leftMargin" id="fdh-bA-hl2"/>
+                                                    <constraint firstItem="c2O-fC-f8E" firstAttribute="left" secondItem="puZ-nU-nwq" secondAttribute="leftMargin" id="htf-bz-8zh"/>
+                                                    <constraint firstItem="1XR-0K-p1z" firstAttribute="top" secondItem="Pez-TP-eVs" secondAttribute="bottomMargin" id="kZ6-oC-KsZ"/>
+                                                    <constraint firstItem="g5Y-v1-MKt" firstAttribute="top" secondItem="Pez-TP-eVs" secondAttribute="bottomMargin" id="leV-iK-Gsz"/>
+                                                    <constraint firstItem="Pez-TP-eVs" firstAttribute="top" secondItem="puZ-nU-nwq" secondAttribute="topMargin" id="qvC-pb-biG"/>
+                                                    <constraint firstItem="c2O-fC-f8E" firstAttribute="top" secondItem="g5Y-v1-MKt" secondAttribute="bottomMargin" id="tNn-d3-gHt"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="puZ-nU-nwq" firstAttribute="top" secondItem="Akx-Oj-5Sj" secondAttribute="topMargin" id="92v-Lg-qXq"/>
+                                            <constraint firstItem="tCR-0s-Q5n" firstAttribute="leading" secondItem="Akx-Oj-5Sj" secondAttribute="leadingMargin" id="ENi-xU-PvC"/>
+                                            <constraint firstItem="XXb-cy-BED" firstAttribute="top" secondItem="Akx-Oj-5Sj" secondAttribute="topMargin" id="ErK-1K-w18"/>
+                                            <constraint firstItem="MDr-ZD-uoq" firstAttribute="leading" secondItem="Akx-Oj-5Sj" secondAttribute="leadingMargin" id="NPg-ix-AqW"/>
+                                            <constraint firstItem="puZ-nU-nwq" firstAttribute="bottom" secondItem="Akx-Oj-5Sj" secondAttribute="bottomMargin" id="PqJ-It-IVg"/>
+                                            <constraint firstItem="iQT-Nx-cHE" firstAttribute="trailing" secondItem="Akx-Oj-5Sj" secondAttribute="trailingMargin" id="SUd-fo-RKl"/>
+                                            <constraint firstItem="MDr-ZD-uoq" firstAttribute="bottom" secondItem="Akx-Oj-5Sj" secondAttribute="bottomMargin" id="T72-iH-zsE"/>
+                                            <constraint firstItem="XXb-cy-BED" firstAttribute="bottom" secondItem="Akx-Oj-5Sj" secondAttribute="bottomMargin" id="Wrc-ZX-8JI"/>
+                                            <constraint firstItem="MDr-ZD-uoq" firstAttribute="top" secondItem="Akx-Oj-5Sj" secondAttribute="topMargin" id="X6N-70-UO3"/>
+                                            <constraint firstItem="puZ-nU-nwq" firstAttribute="trailing" secondItem="Akx-Oj-5Sj" secondAttribute="trailingMargin" id="Xrj-8G-gP5"/>
+                                            <constraint firstItem="iQT-Nx-cHE" firstAttribute="top" secondItem="Akx-Oj-5Sj" secondAttribute="topMargin" id="ZEx-wl-lq6"/>
+                                            <constraint firstItem="tCR-0s-Q5n" firstAttribute="trailing" secondItem="Akx-Oj-5Sj" secondAttribute="trailingMargin" id="Zhh-s9-Pbh"/>
+                                            <constraint firstItem="XXb-cy-BED" firstAttribute="leading" secondItem="Akx-Oj-5Sj" secondAttribute="leadingMargin" id="bDy-Qe-YHl"/>
+                                            <constraint firstItem="iQT-Nx-cHE" firstAttribute="leading" secondItem="Akx-Oj-5Sj" secondAttribute="leadingMargin" id="lxb-cM-cNg"/>
+                                            <constraint firstItem="puZ-nU-nwq" firstAttribute="leading" secondItem="Akx-Oj-5Sj" secondAttribute="leadingMargin" id="mZD-Sy-cnL"/>
+                                            <constraint firstItem="XXb-cy-BED" firstAttribute="trailing" secondItem="Akx-Oj-5Sj" secondAttribute="trailingMargin" id="qVH-74-i3Y"/>
+                                            <constraint firstItem="tCR-0s-Q5n" firstAttribute="top" secondItem="Akx-Oj-5Sj" secondAttribute="topMargin" id="xjD-ni-0Ql"/>
+                                            <constraint firstItem="iQT-Nx-cHE" firstAttribute="bottom" secondItem="Akx-Oj-5Sj" secondAttribute="bottomMargin" id="yTM-lK-E7p"/>
+                                            <constraint firstItem="MDr-ZD-uoq" firstAttribute="trailing" secondItem="Akx-Oj-5Sj" secondAttribute="trailingMargin" id="z3H-d2-jJt"/>
+                                            <constraint firstItem="tCR-0s-Q5n" firstAttribute="bottom" secondItem="Akx-Oj-5Sj" secondAttribute="bottomMargin" id="ze0-rL-E3z"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="543-NV-2bk" firstAttribute="top" secondItem="amH-FF-rBy" secondAttribute="topMargin" id="CbZ-IP-ize"/>
+                                    <constraint firstItem="Akx-Oj-5Sj" firstAttribute="leading" secondItem="amH-FF-rBy" secondAttribute="leadingMargin" id="NFw-fd-53a"/>
+                                    <constraint firstItem="543-NV-2bk" firstAttribute="leading" secondItem="amH-FF-rBy" secondAttribute="leadingMargin" id="NcY-sE-j2f"/>
+                                    <constraint firstItem="Akx-Oj-5Sj" firstAttribute="trailing" secondItem="amH-FF-rBy" secondAttribute="trailingMargin" id="b7C-IZ-Yvn"/>
+                                    <constraint firstItem="543-NV-2bk" firstAttribute="trailing" secondItem="amH-FF-rBy" secondAttribute="trailingMargin" id="gBL-aO-Ape"/>
+                                    <constraint firstItem="Akx-Oj-5Sj" firstAttribute="top" secondItem="543-NV-2bk" secondAttribute="bottom" id="slN-Tl-P4w"/>
+                                    <constraint firstItem="Akx-Oj-5Sj" firstAttribute="bottom" secondItem="amH-FF-rBy" secondAttribute="bottomMargin" id="uyN-g6-von"/>
+                                </constraints>
+                            </view>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ofA-R8-0eg">
+                                <rect key="frame" x="20" y="800" width="390" height="90"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleAspectFit" highlighted="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pSZ-Pn-wAW" userLabel="HUD Display Button">
+                                        <rect key="frame" x="0.0" y="19" width="72.333333333333329" height="52"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" button="YES" image="YES" updatesFrequently="YES"/>
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
+                                        <color key="tintColor" systemColor="systemYellowColor"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" imagePadding="0.0">
+                                            <imageReference key="image" image="slider.horizontal.below.rectangle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                <hierarchicalColors>
+                                                    <color systemColor="systemYellowColor"/>
+                                                    <color systemColor="secondaryLabelColor"/>
+                                                    <color systemColor="tertiaryLabelColor"/>
+                                                </hierarchicalColors>
+                                            </imageReference>
+                                            <backgroundConfiguration key="background">
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="32" scale="large"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="toggleHUD:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="Duu-aD-Fcy"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mcl-en-N2e">
+                                        <rect key="frame" x="155.33333333333334" y="13" width="87" height="64"/>
+                                        <color key="tintColor" systemColor="systemYellowColor"/>
+                                        <state key="normal">
+                                            <imageReference key="image" image="record.circle" catalog="system" renderingMode="hierarchical">
+                                                <hierarchicalColors>
+                                                    <color systemColor="systemYellowColor"/>
+                                                    <color systemColor="secondaryLabelColor"/>
+                                                    <color systemColor="tertiaryLabelColor"/>
+                                                </hierarchicalColors>
+                                            </imageReference>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="32"/>
+                                        </state>
+                                        <buttonConfiguration key="configuration" style="plain" imagePadding="0.0">
+                                            <imageReference key="image" image="record.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                <hierarchicalColors>
+                                                    <color systemColor="systemYellowColor"/>
+                                                    <color systemColor="secondaryLabelColor"/>
+                                                    <color systemColor="tertiaryLabelColor"/>
+                                                </hierarchicalColors>
+                                            </imageReference>
+                                            <backgroundConfiguration key="background">
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="42" scale="large"/>
+                                        </buttonConfiguration>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="toggleMovieRecording:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="kRM-DR-2H2"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="-3" contentMode="scaleAspectFit" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8MA-oo-st4" userLabel="Cover View Button">
+                                        <rect key="frame" x="325.33333333333331" y="19" width="64.666666666666686" height="52"/>
+                                        <state key="normal">
+                                            <imageReference key="image" image="iphone.slash" catalog="system" symbolScale="medium" renderingMode="hierarchical">
+                                                <hierarchicalColors>
+                                                    <color systemColor="systemYellowColor"/>
+                                                    <color systemColor="secondaryLabelColor"/>
+                                                    <color systemColor="tertiaryLabelColor"/>
+                                                </hierarchicalColors>
+                                            </imageReference>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="32"/>
+                                        </state>
+                                        <buttonConfiguration key="configuration" style="plain" imagePadding="0.0">
+                                            <imageReference key="image" image="iphone.slash" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                <hierarchicalColors>
+                                                    <color systemColor="systemYellowColor"/>
+                                                    <color systemColor="secondaryLabelColor"/>
+                                                    <color systemColor="tertiaryLabelColor"/>
+                                                </hierarchicalColors>
+                                            </imageReference>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="32" scale="large"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="toggleDisplay:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="d47-1k-iPD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="UNp-5O-eMV"/>
+                                </constraints>
+                            </stackView>
+                            <view hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vRU-a6-qp8">
+                                <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                                <subviews>
+                                    <button opaque="NO" tag="-3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wuj-OT-Soh" userLabel="Toggle Cover View Button">
+                                        <rect key="frame" x="187" y="433.33333333333331" width="56" height="65.333333333333314"/>
+                                        <color key="tintColor" systemColor="systemGray5Color"/>
+                                        <state key="normal" image="iphone.slash" catalog="system">
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="56"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="toggleCoverView:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="TkP-Wa-NTs"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="wuj-OT-Soh" firstAttribute="centerX" secondItem="vRU-a6-qp8" secondAttribute="centerX" id="mwX-WR-R9Q"/>
+                                    <constraint firstItem="wuj-OT-Soh" firstAttribute="centerY" secondItem="vRU-a6-qp8" secondAttribute="centerY" id="xjv-My-CVB"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="twQ-td-cHY"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <accessibility key="accessibilityConfiguration">
+                            <accessibilityTraits key="traits" updatesFrequently="YES"/>
+                        </accessibility>
+                        <constraints>
+                            <constraint firstItem="vRU-a6-qp8" firstAttribute="height" secondItem="9Za-05-zwY" secondAttribute="height" id="0kS-uq-QAV"/>
+                            <constraint firstItem="amH-FF-rBy" firstAttribute="leadingMargin" secondItem="9Za-05-zwY" secondAttribute="leadingMargin" id="3H1-Hp-xdr"/>
+                            <constraint firstItem="fSz-dY-3y2" firstAttribute="leading" secondItem="twQ-td-cHY" secondAttribute="leading" constant="203" id="4ce-YJ-Fhb"/>
+                            <constraint firstItem="amH-FF-rBy" firstAttribute="bottomMargin" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="HBS-iO-4EN"/>
+                            <constraint firstItem="amH-FF-rBy" firstAttribute="trailingMargin" secondItem="9Za-05-zwY" secondAttribute="trailingMargin" id="PsD-S2-rFd"/>
+                            <constraint firstItem="ofA-R8-0eg" firstAttribute="leadingMargin" secondItem="9Za-05-zwY" secondAttribute="leadingMargin" id="Q3C-lj-4Xu"/>
+                            <constraint firstItem="vRU-a6-qp8" firstAttribute="centerX" secondItem="9Za-05-zwY" secondAttribute="centerX" id="TOf-bD-0he"/>
+                            <constraint firstItem="ofA-R8-0eg" firstAttribute="bottomMargin" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="Vmx-oV-zsf"/>
+                            <constraint firstItem="gwL-zO-1Pw" firstAttribute="centerX" secondItem="9Za-05-zwY" secondAttribute="centerX" id="Xpm-3m-FZY"/>
+                            <constraint firstItem="amH-FF-rBy" firstAttribute="topMargin" secondItem="9Za-05-zwY" secondAttribute="topMargin" id="ZdH-RE-8YC"/>
+                            <constraint firstItem="fSz-dY-3y2" firstAttribute="centerX" secondItem="9Za-05-zwY" secondAttribute="centerX" id="bdS-a6-An0"/>
+                            <constraint firstItem="fSz-dY-3y2" firstAttribute="top" secondItem="twQ-td-cHY" secondAttribute="top" constant="397" id="hhO-4s-87N"/>
+                            <constraint firstItem="vRU-a6-qp8" firstAttribute="width" secondItem="9Za-05-zwY" secondAttribute="width" id="jM2-hX-Uxf"/>
+                            <constraint firstItem="gwL-zO-1Pw" firstAttribute="top" secondItem="fSz-dY-3y2" secondAttribute="bottom" constant="8" symbolic="YES" id="lhd-XG-fvr"/>
+                            <constraint firstItem="fSz-dY-3y2" firstAttribute="centerY" secondItem="9Za-05-zwY" secondAttribute="centerY" id="pNA-23-46p"/>
+                            <constraint firstItem="vRU-a6-qp8" firstAttribute="centerY" secondItem="9Za-05-zwY" secondAttribute="centerY" id="rpd-LO-LYx"/>
+                            <constraint firstItem="ofA-R8-0eg" firstAttribute="trailing" secondItem="9Za-05-zwY" secondAttribute="trailingMargin" id="ywR-Gx-tUS"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="HUDButton" destination="pSZ-Pn-wAW" id="PCY-Et-JCU"/>
+                        <outlet property="ISOSlider" destination="eau-wv-dU0" id="8eM-q8-igN"/>
+                        <outlet property="cameraUnavailableImageView" destination="fSz-dY-3y2" id="ntJ-uX-8d8"/>
+                        <outlet property="controlsView" destination="Akx-Oj-5Sj" id="OZY-fQ-eeW"/>
+                        <outlet property="coverView" destination="vRU-a6-qp8" id="ZkZ-Rr-Xal"/>
+                        <outlet property="exposureDurationSlider" destination="7R6-CN-WmZ" id="bsY-ft-Wyy"/>
+                        <outlet property="exposureModeControl" destination="vvO-Ky-Czn" id="pqH-oy-Ju7"/>
+                        <outlet property="focusModeControl" destination="ktg-mg-Ejd" id="AWo-pJ-qt9"/>
+                        <outlet property="grayWorldButton" destination="1XR-0K-p1z" id="rte-6V-uYi"/>
+                        <outlet property="lensPositionSlider" destination="TV0-Z0-OUU" id="LvC-Bw-06A"/>
+                        <outlet property="manualHUD" destination="amH-FF-rBy" id="5GY-L7-Ddm"/>
+                        <outlet property="manualHUDExposureView" destination="iQT-Nx-cHE" id="Bpf-ZU-XhK"/>
+                        <outlet property="manualHUDFocusView" destination="MDr-ZD-uoq" id="zuW-eL-JvW"/>
+                        <outlet property="manualHUDSegmentedControl" destination="543-NV-2bk" id="Hhb-rp-16l"/>
+                        <outlet property="manualHUDTorchLevelView" destination="XXb-cy-BED" id="FX3-V0-nVr"/>
+                        <outlet property="manualHUDVideoZoomFactorView" destination="tCR-0s-Q5n" id="ebG-Fc-c0y"/>
+                        <outlet property="manualHUDWhiteBalanceView" destination="puZ-nU-nwq" id="0Uz-DK-r3i"/>
+                        <outlet property="previewView" destination="9Za-05-zwY" id="llM-aG-xvt"/>
+                        <outlet property="recordButton" destination="mcl-en-N2e" id="i4O-yh-h1k"/>
+                        <outlet property="resumeButton" destination="gwL-zO-1Pw" id="xvg-vj-GpD"/>
+                        <outlet property="temperatureSlider" destination="g5Y-v1-MKt" id="J3z-6X-KUy"/>
+                        <outlet property="tintSlider" destination="c2O-fC-f8E" id="QEP-ar-9vn"/>
+                        <outlet property="torchLevelSlider" destination="VNK-3C-FPF" id="7oX-rV-aOe"/>
+                        <outlet property="videoZoomFactorSlider" destination="uyM-gg-aDC" id="Wqr-vq-IB7"/>
+                        <outlet property="whiteBalanceModeControl" destination="Pez-TP-eVs" id="qVt-2c-tPz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4sS-pb-l0E" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <customObject id="hP6-wY-leu" customClass="AVCamManualAppDelegate">
+                    <connections>
+                        <outlet property="movieAppEventDelegate" destination="zFy-Vn-e8f" id="yNs-Ks-4dU"/>
+                    </connections>
+                </customObject>
+            </objects>
+            <point key="canvasLocation" x="1257.5402635431917" y="454.68749999999994"/>
+        </scene>
+    </scenes>
+    <color key="tintColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+    <resources>
+        <image name="autostartstop" catalog="system" width="128" height="125"/>
+        <image name="b.circle" catalog="system" width="128" height="123"/>
+        <image name="bolt.circle" catalog="system" width="128" height="123"/>
+        <image name="camera.aperture" catalog="system" width="128" height="123"/>
+        <image name="camera.filters" catalog="system" width="128" height="119"/>
+        <image name="camera.metering.multispot" catalog="system" width="128" height="93"/>
+        <image name="camera.metering.none" catalog="system" width="128" height="93"/>
+        <image name="circle.lefthalf.filled" catalog="system" width="128" height="123"/>
+        <image name="g.circle" catalog="system" width="128" height="123"/>
+        <image name="iphone.slash" catalog="system" width="112" height="128"/>
+        <image name="light.max" catalog="system" width="128" height="72"/>
+        <image name="light.min" catalog="system" width="128" height="75"/>
+        <image name="lock.open.rotation" catalog="system" width="128" height="112"/>
+        <image name="lock.rotation" catalog="system" width="128" height="112"/>
+        <image name="m.circle" catalog="system" width="128" height="123"/>
+        <image name="magnifyingglass.circle" catalog="system" width="128" height="123"/>
+        <image name="minus.magnifyingglass" catalog="system" width="128" height="117"/>
+        <image name="plus.magnifyingglass" catalog="system" width="128" height="117"/>
+        <image name="record.circle" catalog="system" width="128" height="123"/>
+        <image name="slider.horizontal.below.rectangle" catalog="system" width="128" height="113"/>
+        <image name="timer" catalog="system" width="128" height="123"/>
+        <image name="timer.circle" catalog="system" width="128" height="123"/>
+        <image name="video.slash" catalog="system" width="128" height="105"/>
+        <image name="viewfinder.circle" catalog="system" width="128" height="123"/>
+        <image name="y.circle" catalog="system" width="128" height="123"/>
+        <systemColor name="quaternaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.17647058823529413" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemFillColor">
+            <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemYellowColor">
+            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="tertiaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
