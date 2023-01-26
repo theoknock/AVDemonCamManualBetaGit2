@@ -68,6 +68,7 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 @property (weak, nonatomic) IBOutlet UIView *manualHUDTorchLevelView;
 @property (weak, nonatomic) IBOutlet UISlider *torchLevelSlider;
 
+@property (strong, nonatomic) UILongPressGestureRecognizer *rescaleLensPositionSliderValueRangeGestureRecognizer;
 
 @property (nonatomic) NSArray *whiteBalanceModes;
 @property (weak, nonatomic) IBOutlet UIView *manualHUDWhiteBalanceView;
@@ -272,6 +273,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 #pragma mark HUD
 
+- (IBAction)longPress:(UILongPressGestureRecognizer *)sender {
+    printf("longPress == %f\n", ((UISlider *)(sender.delegate)).value);
+}
+
 - (void)configureManualHUD
 {
     self.focusModes = @[@(AVCaptureFocusModeContinuousAutoFocus), @(AVCaptureFocusModeLocked)];
@@ -280,14 +285,25 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         __autoreleasing NSError *error;
         if ([_videoDevice lockForConfiguration:&error]) {
             [self.focusModeControl setSelectedSegmentIndex:0];
+            [self changeFocusMode:self.focusModeControl];
             self.lensPositionSlider.minimumValue = 0.0;
             self.lensPositionSlider.maximumValue = 1.0;
-            self.lensPositionSlider.value = 0.0;
+            self.lensPositionSlider.value = self.videoDevice.lensPosition;
             [self.lensPositionSlider setMinimumTrackTintColor:[UIColor systemYellowColor]];
             [self.lensPositionSlider setMaximumTrackTintColor:[UIColor systemBlueColor]];
             [self.lensPositionSlider setThumbTintColor:[UIColor whiteColor]];
             rescale_lens_position = set_lens_position_scale(0.f, 1.f, 0.f, 1.f);
-            [self changeFocusMode:self.focusModeControl];
+            
+            self.rescaleLensPositionSliderValueRangeGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self.rescaleLensPositionSliderValueRangeGestureRecognizer action:@selector(rescaleLensPositionSliderRange:)];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setAllowableMovement:20];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setMinimumPressDuration:(NSTimeInterval)0.5];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setNumberOfTapsRequired:1];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setNumberOfTouchesRequired:1];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setDelaysTouchesBegan:FALSE];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setDelaysTouchesEnded:FALSE];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setCancelsTouchesInView:TRUE];
+            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setRequiresExclusiveTouchType:FALSE];
+            [self.lensPositionSlider addGestureRecognizer:self.rescaleLensPositionSliderValueRangeGestureRecognizer];
             
             self.exposureModes = @[@(AVCaptureExposureModeContinuousAutoExposure), @(AVCaptureExposureModeCustom)];
             self.exposureModeControl.enabled = ( self.videoDevice != nil );
@@ -314,7 +330,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             
             self.videoZoomFactorSlider.minimumValue = 0.0;
             self.videoZoomFactorSlider.maximumValue = 1.0;
-            self.videoZoomFactorSlider.value = property_control_value(self.videoDevice.videoZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 1.f);
+            self.videoZoomFactorSlider.value = property_control_value(self.videoDevice.videoZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, -1.f);
             self.videoZoomFactorSlider.enabled = YES;
             
             
@@ -609,6 +625,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         NSLog( @"Could not lock device for configuration: %@", error );
     }
 }
+- (IBAction)rescaleLensPositionSliderRange:(UILongPressGestureRecognizer *)sender {
+    printf("\nrescaled_value %f to %f\n", (self.lensPositionSlider.value), property_control_value(self.lensPositionSlider.value, 0.f, 1.f, 1.f, 0.f));
+    rescale_lens_position = set_lens_position_scale(0.f, 1.f, self.lensPositionSlider.value - 0.10, self.lensPositionSlider.value + 0.10);
+    
+}
 
 - (IBAction)magnifyLensPositionSlider:(UISlider *)sender forEvent:(UIEvent *)event {
     printf("%s\n", __PRETTY_FUNCTION__);
@@ -618,7 +639,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //    [sender setThumbTintColor:[UIColor systemGrayColor]];
     [sender setBackgroundColor:[UIColor colorWithWhite:1.f alpha:0.15f]];
     
-    rescale_lens_position = set_lens_position_scale(0.f, 1.f, (sender.value - 0.15), (sender.value + 0.15));
+    rescale_lens_position = set_lens_position_scale(0.f, 1.f, (sender.value - 0.10), (sender.value + 0.15));
 }
 
 - (IBAction)changeLensPosition:(UISlider *)sender
@@ -1102,7 +1123,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ( newValue && newValue != [NSNull null] ) {
             double newZoomFactor = [newValue doubleValue];
             dispatch_async( dispatch_get_main_queue(), ^{
-//                [self.videoZoomFactorSlider setValue:property_control_value(newZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 1.f)];
+                [self.videoZoomFactorSlider setValue:property_control_value(newZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, -1.f)];
             });
         }
     }

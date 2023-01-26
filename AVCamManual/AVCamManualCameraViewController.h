@@ -19,7 +19,7 @@ static double (^ _Nonnull control_property_value)(double, double, double, double
 // Standardizes (0 - 1) camera property values (ranges vary)
 // From camera property to slider
 static double (^ _Nonnull property_control_value)(double, double, double, double, double) = ^ double (double property_value, double property_value_min, double property_value_max, double inverse_gamma, double offset) {
-    return ((pow(property_value, 1.f / inverse_gamma) - property_value_min) / (property_value_max - property_value_min) + offset);
+    return (((pow(property_value, 1.f / inverse_gamma) - (property_value_min / property_value_max)) - property_value_min) + offset);
 };
 
 // Unused
@@ -38,7 +38,7 @@ static double (^(^ _Nonnull set_lens_position_scale)(const double, const double,
 
 @class AVCamManualAppDelegate;
 
-@interface AVCamManualCameraViewController : UIViewController <MovieAppEventDelegate>
+@interface AVCamManualCameraViewController : UIViewController <MovieAppEventDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic) AVCaptureMovieFileOutput * _Nullable movieFileOutput;
 - (void)captureOutput:(AVCaptureFileOutput * _Nullable)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL * _Nonnull)outputFileURL fromConnections:(NSArray * _Nonnull)connections error:(NSError * _Nullable)error;

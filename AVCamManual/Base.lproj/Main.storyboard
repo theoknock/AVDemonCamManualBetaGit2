@@ -144,6 +144,9 @@
                                                 <subviews>
                                                     <slider opaque="NO" contentMode="scaleToFill" highlighted="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="TV0-Z0-OUU">
                                                         <rect key="frame" x="6" y="68" width="362" height="61"/>
+                                                        <accessibility key="accessibilityConfiguration">
+                                                            <accessibilityTraits key="traits" updatesFrequently="YES"/>
+                                                        </accessibility>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="60" id="CXK-w2-L48"/>
                                                         </constraints>
@@ -166,9 +169,7 @@
                                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <connections>
                                                             <action selector="changeLensPosition:" destination="zFy-Vn-e8f" eventType="valueChanged" id="0nI-xS-4od"/>
-                                                            <action selector="magnifyLensPositionSlider:forEvent:" destination="zFy-Vn-e8f" eventType="touchDownRepeat" id="0fy-LC-plF"/>
-                                                            <action selector="restoreLensSlider:forEvent:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="Xk7-cx-RhQ"/>
-                                                            <action selector="restoreLensSlider_:forEvent:" destination="zFy-Vn-e8f" eventType="touchUpOutside" id="1f5-jQ-xJc"/>
+                                                            <outletCollection property="gestureRecognizers" destination="bod-zS-Hi9" appends="YES" id="gtv-qX-gNV"/>
                                                         </connections>
                                                     </slider>
                                                     <segmentedControl opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
@@ -475,6 +476,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstItem="543-NV-2bk" firstAttribute="top" secondItem="amH-FF-rBy" secondAttribute="topMargin" id="CbZ-IP-ize"/>
                                     <constraint firstItem="Akx-Oj-5Sj" firstAttribute="leading" secondItem="amH-FF-rBy" secondAttribute="leadingMargin" id="NFw-fd-53a"/>
@@ -661,6 +663,12 @@
                         <outlet property="movieAppEventDelegate" destination="zFy-Vn-e8f" id="yNs-Ks-4dU"/>
                     </connections>
                 </customObject>
+                <pongPressGestureRecognizer cancelsTouchesInView="NO" delaysTouchesEnded="NO" requiresExclusiveTouchType="NO" allowableMovement="10" minimumPressDuration="0.5" id="bod-zS-Hi9">
+                    <connections>
+                        <action selector="longPress:" destination="4sS-pb-l0E" id="cIb-af-NOH"/>
+                        <outlet property="delegate" destination="TV0-Z0-OUU" id="C3r-WY-u3f"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1257.5402635431917" y="454.68749999999994"/>
         </scene>
