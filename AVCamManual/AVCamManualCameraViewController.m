@@ -323,9 +323,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             self.exposureDurationSlider.enabled = ( self.videoDevice && self.videoDevice.exposureMode == AVCaptureExposureModeCustom);
             
         
-            self.ISOSlider.minimumValue = self.videoDevice.activeFormat.minISO;
-            self.ISOSlider.maximumValue = self.videoDevice.activeFormat.maxISO;
-            self.ISOSlider.value = self.videoDevice.ISO;
+            self.ISOSlider.minimumValue = 0.f; //;
+            self.ISOSlider.maximumValue = 1.f; //self.videoDevice.activeFormat.maxISO;
+            self.ISOSlider.value = property_control_value(self.videoDevice.ISO, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f);
             self.ISOSlider.enabled = ( self.videoDevice.exposureMode == AVCaptureExposureModeCustom );
             
             self.videoZoomFactorSlider.minimumValue = 0.0;
@@ -755,14 +755,13 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
 }
 
-- (IBAction)changeISO:(id)sender
+- (IBAction)changeISO:(UISlider *)sender
 {
-    UISlider *control = sender;
     NSError *error = nil;
     
     if ( [self.videoDevice lockForConfiguration:&error] ) {
         @try {
-            [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:control.value completionHandler:nil];
+            [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:control_property_value(sender.value, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f) completionHandler:nil];
         } @catch (NSException *exception) {
             [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:AVCaptureISOCurrent completionHandler:nil];
         } @finally {
@@ -1114,7 +1113,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             
             dispatch_async( dispatch_get_main_queue(), ^{
                 if ( exposureMode != AVCaptureExposureModeCustom ) {
-                    self.ISOSlider.value = newISO;
+                    self.ISOSlider.value = property_control_value(newISO, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f);
                 }
             } );
         }
