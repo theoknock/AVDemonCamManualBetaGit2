@@ -330,7 +330,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             
             self.videoZoomFactorSlider.minimumValue = 0.0;
             self.videoZoomFactorSlider.maximumValue = 1.0;
-            self.videoZoomFactorSlider.value = property_control_value(self.videoDevice.videoZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, -1.f);
+            self.videoZoomFactorSlider.value = property_control_value(self.videoDevice.videoZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f);
             self.videoZoomFactorSlider.enabled = YES;
             
             
