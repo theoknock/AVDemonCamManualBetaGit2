@@ -28,9 +28,9 @@ static double (^ _Nonnull rescale_value)(double, double, double, double, double)
 };
 
 
-static const double (^rescale_lens_position)(double);
-static double (^ const (* restrict rescale_lens_position_t))(double) = &rescale_lens_position;
-static double (^(^ _Nonnull set_lens_position_scale)(const double, const double, const double, const double))(double) = ^ (double value_min, double value_max, double new_value_min, double new_value_max) {
+static double (^ _Nonnull rescale_lens_position)(double);
+static double (^ _Nonnull const (* _Nullable restrict rescale_lens_position_t))(double) = &rescale_lens_position;
+static double (^_Nonnull(^ _Nonnull set_lens_position_scale)(const double, const double, const double, const double))(double) = ^ (double value_min, double value_max, double new_value_min, double new_value_max) {
     return ^ (double value) {
         return (new_value_max - new_value_min) * (value - value_min) / (value_max - value_min) + new_value_min;
     };

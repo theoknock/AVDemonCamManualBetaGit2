@@ -3,4 +3,54 @@
    uuid = "10D67A96-43D6-48A1-98D1-C0F6EECBA2CF"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F5AF5A13-F061-4446-AF27-E36D8DB5F397"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AVCamManual/AVCamManualCameraViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "296"
+            endingLineNumber = "296"
+            landmarkName = "-configureManualHUD"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F5AF5A13-F061-4446-AF27-E36D8DB5F397 - 40a50a5bb0198992"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[AVCamManualCameraViewController configureManualHUD]"
+                  moduleName = "AVDemonCamManual"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/xcodedeveloper/Desktop/AVDemonCamManualBetaGit/AVCamManual/AVCamManualCameraViewController.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "296"
+                  endingLineNumber = "296"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "F5AF5A13-F061-4446-AF27-E36D8DB5F397 - 296be916b3ad8eef"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__53-[AVCamManualCameraViewController configureManualHUD]_block_invoke"
+                  moduleName = "AVDemonCamManual"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/xcodedeveloper/Desktop/AVDemonCamManualBetaGit/AVCamManual/AVCamManualCameraViewController.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "297"
+                  endingLineNumber = "297"
+                  offsetFromSymbolStart = "72">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

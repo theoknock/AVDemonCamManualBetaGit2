@@ -257,8 +257,20 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     
     if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
         AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-        previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)deviceOrientation;
+        
+        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
+        previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
+        
+//        previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)deviceOrientation;
     }
+    
+    //    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    //    if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
+    //        AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+    //        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:preview_layer(self->_previewView)];
+    //        previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
+    //    }
+    //} );
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -283,7 +295,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     
     dispatch_async(dispatch_get_main_queue(), ^{
         __autoreleasing NSError *error;
-        if ([_videoDevice lockForConfiguration:&error]) {
+        if ([self->_videoDevice lockForConfiguration:&error]) {
             [self.focusModeControl setSelectedSegmentIndex:0];
             [self changeFocusMode:self.focusModeControl];
             self.lensPositionSlider.minimumValue = 0.0;
@@ -322,7 +334,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             
             self.exposureDurationSlider.enabled = ( self.videoDevice && self.videoDevice.exposureMode == AVCaptureExposureModeCustom);
             
-        
+            
             self.ISOSlider.minimumValue = 0.f; //;
             self.ISOSlider.maximumValue = 1.f; //self.videoDevice.activeFormat.maxISO;
             self.ISOSlider.value = property_control_value(self.videoDevice.ISO, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f);
@@ -366,14 +378,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             self.tintSlider.value = property_control_value(whiteBalanceTemperatureAndTint.tint, -150.f, 150.f, 1.f, 0.f);
             self.tintSlider.enabled = ( self.videoDevice && self.videoDevice.whiteBalanceMode == AVCaptureWhiteBalanceModeLocked );
             
-            if ([_videoDevice isTorchActive])
-                [_videoDevice setTorchMode:0];
+            if ([self->_videoDevice isTorchActive])
+                [self->_videoDevice setTorchMode:0];
             //            else
             //                [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
         } else {
             NSLog(@"AVCaptureDevice lockForConfiguration returned error\t%@", error);
         }
-        [_videoDevice unlockForConfiguration];
+        [self->_videoDevice unlockForConfiguration];
     });
 }
 
@@ -491,7 +503,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
             if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
                 AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-                previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)deviceOrientation;
+                AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:videoDevice previewLayer:previewLayer];
+                previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
             }
         } );
     }
@@ -634,9 +647,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (IBAction)magnifyLensPositionSlider:(UISlider *)sender forEvent:(UIEvent *)event {
     printf("%s\n", __PRETTY_FUNCTION__);
     // set new colors
-//    [sender setMinimumTrackTintColor:[UIColor systemOrangeColor]];
-//    [sender setMaximumTrackTintColor:[UIColor systemIndigoColor]];
-//    [sender setThumbTintColor:[UIColor systemGrayColor]];
+    //    [sender setMinimumTrackTintColor:[UIColor systemOrangeColor]];
+    //    [sender setMaximumTrackTintColor:[UIColor systemIndigoColor]];
+    //    [sender setThumbTintColor:[UIColor systemGrayColor]];
     [sender setBackgroundColor:[UIColor colorWithWhite:1.f alpha:0.15f]];
     
     rescale_lens_position = set_lens_position_scale(0.f, 1.f, (sender.value - 0.10), (sender.value + 0.15));
@@ -661,11 +674,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (IBAction)restoreLensSlider_:(UISlider *)sender forEvent:(UIEvent *)event {
     printf("%s\n", __PRETTY_FUNCTION__);
     // restore original colors
-//    [sender setMinimumTrackTintColor:[UIColor systemYellowColor]];
-//    [sender setMaximumTrackTintColor:[UIColor systemBlueColor]];
-//    [sender setThumbTintColor:[UIColor whiteColor]];
+    //    [sender setMinimumTrackTintColor:[UIColor systemYellowColor]];
+    //    [sender setMaximumTrackTintColor:[UIColor systemBlueColor]];
+    //    [sender setThumbTintColor:[UIColor whiteColor]];
     [sender setBackgroundColor:[UIColor colorWithWhite:1.f alpha:0.f]];
-
+    
     rescale_lens_position = set_lens_position_scale(0.f, 1.f, 0.f, 1.f);
 }
 
@@ -720,9 +733,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeExposureDuration:(UISlider *)sender
 {
-    UISlider *control = sender;
+//    UISlider *control = sender;
     NSError *error = nil;
-
+    
     double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000*1000*1000));
     double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000*1000*1000));
     double exposureDurationSeconds = control_property_value(sender.value, minExposureDurationSeconds, maxExposureDurationSeconds, kExposureDurationPower, 0.f);
@@ -779,12 +792,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (IBAction)changeVideoZoomFactor:(UISlider *)sender {
     if (![self.videoDevice isRampingVideoZoom] && (sender.value != self.videoDevice.videoZoomFactor)) {
         @try {
-           ^{
-                    NSError * e = nil;
-                    ((([self.videoDevice lockForConfiguration:&e] && !e)
-                    && ^ unsigned long { [self.videoDevice setVideoZoomFactor:control_property_value(sender.value, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f)]; return 1UL; }())
-                    || ^ unsigned long { @throw [NSException exceptionWithName:e.domain reason:e.localizedFailureReason userInfo:@{@"Error Code" : @(e.code)}]; return 1UL; }());
-                }();
+            ^{
+                NSError * e = nil;
+                ((([self.videoDevice lockForConfiguration:&e] && !e)
+                  && ^ unsigned long { [self.videoDevice setVideoZoomFactor:control_property_value(sender.value, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f)]; return 1UL; }())
+                 || ^ unsigned long { @throw [NSException exceptionWithName:e.domain reason:e.localizedFailureReason userInfo:@{@"Error Code" : @(e.code)}]; return 1UL; }());
+            }();
         } @catch (NSException * exception) {
             printf("Error configuring camera:\n\tDomain: %s\n\tLocalized failure reason: %s\n\tError code: %lu\n",
                    [exception.name UTF8String],
@@ -880,7 +893,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (IBAction)toggleMovieRecording:(UIButton *)sender
 {
     AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-    AVCaptureVideoOrientation previewLayerVideoOrientation = previewLayer.connection.videoOrientation;
+    AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
+    previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
     if ( ! self.movieFileOutput.isRecording ) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [sender setAlpha:.15];
@@ -891,7 +905,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
             }
             AVCaptureConnection *movieConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-            movieConnection.videoOrientation = previewLayerVideoOrientation;
+            AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:previewLayer];
+            previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+            movieConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
+//            movieConnection.videoOrientation = previewLayerVideoOrientation;
             
             NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
             NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
@@ -1091,7 +1108,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
     else if ( context == ExposureDurationContext ) {
         if ( newValue && newValue != [NSNull null] ) {
-            double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
+//            double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
             AVCaptureExposureMode exposureMode = self.videoDevice.exposureMode;
             
             double exposureDurationSeconds = CMTimeGetSeconds( self.videoDevice.exposureDuration );
