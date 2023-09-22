@@ -59,10 +59,10 @@
 				7A49F5BB1B38C0B6003D7AF5 /* AVCamManualPreviewView.h */,
 				7A49F5BC1B38C0B6003D7AF5 /* AVCamManualPreviewView.m */,
 				7A49F5B91B38C0B6003D7AF5 /* AVCamManualCameraViewController.h */,
+				7A49F5C21B38C0F3003D7AF5 /* Images.xcassets */,
 				7A49F5BA1B38C0B6003D7AF5 /* AVCamManualCameraViewController.m */,
 				7A49F5C01B38C0DF003D7AF5 /* Info.plist */,
 				7A49F5A61B38C02B003D7AF5 /* Main.storyboard */,
-				7A49F5C21B38C0F3003D7AF5 /* Images.xcassets */,
 				7A49F5B41B38C094003D7AF5 /* Launch Screen.storyboard */,
 				7A49F59E1B38C02B003D7AF5 /* main.m */,
 			);
@@ -281,7 +281,8 @@
 		7A49F5B21B38C02B003D7AF5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = EyeAppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
@@ -308,7 +309,8 @@
 		7A49F5B31B38C02B003D7AF5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = EyeAppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
