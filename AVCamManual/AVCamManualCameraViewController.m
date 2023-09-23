@@ -77,7 +77,7 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 @property (weak, nonatomic) IBOutlet UISlider *tintSlider;
 @property (weak, nonatomic) IBOutlet UIButton *grayWorldButton;
 @property (weak, nonatomic) IBOutlet UIView *coverView;
-@property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
+//@property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
 
 
 // Session management
@@ -154,7 +154,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                     self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
                     AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
                     if ( connection.isVideoStabilizationSupported )
-                        connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeCinematicExtended;
+                        connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
                     printf("connection.activeVideoStabilizationMode == %ld", (long)connection.activeVideoStabilizationMode);
                     [self.session commitConfiguration];
                 });
@@ -263,18 +263,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
         
         AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
-        previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
-        
-        //        previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)deviceOrientation;
+        previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
     }
-    
-    //    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-    //    if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
-    //        AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-    //        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:preview_layer(self->_previewView)];
-    //        previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
-    //    }
-    //} );
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -332,8 +322,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             self.exposureDurationSlider.minimumValue = 0.f;
             self.exposureDurationSlider.maximumValue = 1.f;
             double exposureDurationSeconds = CMTimeGetSeconds( self.videoDevice.exposureDuration );
-            double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000*1000*1000));
-            double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000*1000*1000));
+            double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000.f*1000.f*1000.f));
+            double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000.f*1000.f*1000.f));
             self.exposureDurationSlider.value = property_control_value(exposureDurationSeconds, minExposureDurationSeconds, maxExposureDurationSeconds, kExposureDurationPower, 0.f);
             
             self.exposureDurationSlider.enabled = ( self.videoDevice && self.videoDevice.exposureMode == AVCaptureExposureModeCustom);
@@ -483,30 +473,31 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         return;
     }
     
-    NSError *error = nil;
+    __autoreleasing NSError *error = nil;
     
+    ({
+        
+    });
     [self.session beginConfiguration];
     
     self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
     [self.session setAutomaticallyConfiguresCaptureDeviceForWideColor:TRUE];
     
     // Add video input
-    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-    AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
+    self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+    self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
     
-    if ( ! videoDeviceInput ) {
+    if ( ! self.videoDeviceInput ) {
         NSLog( @"Could not create video device input: %@", error );
         self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
         [self.session commitConfiguration];
         return;
     }
-    if ( [self.session canAddInput:videoDeviceInput] ) {
-        [self.session addInput:videoDeviceInput];
-        self.videoDeviceInput = videoDeviceInput;
-        self.videoDevice = videoDevice;
+    if ( [self.session canAddInput:self.videoDeviceInput] ) {
+        [self.session addInput:self.videoDeviceInput];
         
         // Configure default camera focus and exposure properties (set to manual vs. auto)
-        __autoreleasing NSError *error = nil;
+        __autoreleasing NSError *error;
         [self.videoDevice lockForConfiguration:&error];
         @try {
             [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
@@ -518,7 +509,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         }
         
         //  Enable low-light boost
-        __autoreleasing NSError *automaticallyEnablesLowLightBoostWhenAvailableError = nil;
+        __autoreleasing NSError *automaticallyEnablesLowLightBoostWhenAvailableError;
         [self.videoDevice lockForConfiguration:&automaticallyEnablesLowLightBoostWhenAvailableError];
         @try {
             [self.videoDevice setAutomaticallyEnablesLowLightBoostWhenAvailable:TRUE];
@@ -532,7 +523,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
             if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
                 AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-                AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:videoDevice previewLayer:previewLayer];
+                AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:previewLayer];
                 previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
             }
         } );
@@ -947,6 +938,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
             NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
+            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
+//                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
+//            });
         });
     }
     else {
@@ -1111,24 +1107,16 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 
                 if ( oldMode != newMode && oldMode == AVCaptureExposureModeCustom ) {
                     NSError *error = nil;
-                    if ( [self.videoDevice lockForConfiguration:&error] ) {
-                        self.videoDevice.activeVideoMaxFrameDuration = kCMTimeInvalid;
-                        self.videoDevice.activeVideoMinFrameDuration = kCMTimeInvalid;
-                        [self.videoDevice unlockForConfiguration];
-                    }
-                    else {
-                        NSLog( @"Could not lock device for configuration: %@", error );
-                    }
+                    [self configureCameraForHighestFrameRate:self.videoDevice];
                 }
             }
+            
             dispatch_async( dispatch_get_main_queue(), ^{
-                
                 self.exposureModeControl.selectedSegmentIndex = [self.exposureModes indexOfObject:@(newMode)];
                 self.exposureDurationSlider.enabled = ( newMode == AVCaptureExposureModeCustom );
                 self.ISOSlider.enabled = ( newMode == AVCaptureExposureModeCustom );
                 self.exposureDurationSlider.selected = ( newMode == AVCaptureExposureModeCustom );
                 self.ISOSlider.selected = ( newMode == AVCaptureExposureModeCustom );
-                
                 
                 if ( oldValue && oldValue != [NSNull null] ) {
                     AVCaptureExposureMode oldMode = [oldValue intValue];
