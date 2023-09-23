@@ -77,6 +77,8 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 @property (weak, nonatomic) IBOutlet UISlider *tintSlider;
 @property (weak, nonatomic) IBOutlet UIButton *grayWorldButton;
 @property (weak, nonatomic) IBOutlet UIView *coverView;
+@property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
+
 
 // Session management
 @property (nonatomic) dispatch_queue_t sessionQueue;
@@ -95,7 +97,6 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 @implementation AVCamManualCameraViewController
 
 
-static const float kExposureMinimumDuration = 1.0/1000; // Limit exposure duration to a useful range
 static const double kVideoZoomFactorPowerCoefficient = 3.333f; // Higher numbers will give the slider more sensitivity at shorter durations
 static const float kExposureDurationPower = 5.f; // Higher numbers will give the slider more sensitivity at shorter durations
 
@@ -147,14 +148,17 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
             
             if ( [self.session canAddOutput:movieFileOutput] ) {
-                [self.session beginConfiguration];
-                [self.session addOutput:movieFileOutput];
-                self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
-                AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-                if ( connection.isVideoStabilizationSupported ) {
-                    connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-                }
-                [self.session commitConfiguration];
+                ({
+                    [self.session beginConfiguration];
+                    [self.session addOutput:movieFileOutput];
+                    self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
+                    AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+                    if ( connection.isVideoStabilizationSupported )
+                        connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeCinematicExtended;
+                    printf("connection.activeVideoStabilizationMode == %ld", (long)connection.activeVideoStabilizationMode);
+                    [self.session commitConfiguration];
+                });
+                
                 
                 self.movieFileOutput = movieFileOutput;
                 
@@ -261,7 +265,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
         previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
         
-//        previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)deviceOrientation;
+        //        previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)deviceOrientation;
     }
     
     //    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
@@ -449,6 +453,30 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 #pragma mark Session Management
 
 // Should be called on the session queue
+- (void)configureCameraForHighestFrameRate:(AVCaptureDevice *)device
+{
+    AVCaptureDeviceFormat *bestFormat = nil;
+    AVFrameRateRange *bestFrameRateRange = nil;
+    for ( AVCaptureDeviceFormat *format in [device formats] ) {
+        for ( AVFrameRateRange *range in format.videoSupportedFrameRateRanges ) {
+            if ( range.maxFrameRate > bestFrameRateRange.maxFrameRate ) {
+                bestFormat = format;
+                bestFrameRateRange = range;
+            }
+        }
+    }
+    if ( bestFormat ) {
+        if ( [device lockForConfiguration:NULL] == YES ) {
+            device.activeFormat = bestFormat;
+            device.activeVideoMinFrameDuration = bestFrameRateRange.minFrameDuration;
+            device.activeVideoMaxFrameDuration = bestFrameRateRange.maxFrameDuration;
+            [device unlockForConfiguration];
+        }
+    }
+}
+
+
+
 - (void)configureSession
 {
     if ( self.setupResult != AVCamManualSetupResultSuccess ) {
@@ -465,6 +493,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     // Add video input
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
     AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
+    
     if ( ! videoDeviceInput ) {
         NSLog( @"Could not create video device input: %@", error );
         self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
@@ -507,6 +536,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
             }
         } );
+        
+        [self configureCameraForHighestFrameRate:self.videoDevice];
+      
+         
     }
     else {
         NSLog( @"Could not add video device input to the session" );
@@ -563,59 +596,60 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 #pragma mark Device Configuration
 
-- (void)changeCameraWithDevice:(AVCaptureDevice *)newVideoDevice
-{
-    // Check if device changed
-    if ( newVideoDevice == self.videoDevice ) {
-        return;
-    }
-    
-    self.manualHUD.userInteractionEnabled = NO;
-    //	self.cameraButton.enabled = NO;
-    self.recordButton.enabled = NO;
-    //	self.photoButton.enabled = NO;
-    //	self.captureModeControl.enabled = NO;
-    //    self.HUDButton.enabled = NO;
-    
-    dispatch_async( self.sessionQueue, ^{
-        AVCaptureDeviceInput *newVideoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:newVideoDevice error:nil];
-        
-        [self.session beginConfiguration];
-        
-        // Remove the existing device input first, since using the front and back camera simultaneously is not supported
-        [self.session removeInput:self.videoDeviceInput];
-        if ( [self.session canAddInput:newVideoDeviceInput] ) {
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:AVCaptureDeviceSubjectAreaDidChangeNotification object:self.videoDevice];
-            
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:newVideoDevice];
-            
-            [self.session addInput:newVideoDeviceInput];
-            self.videoDeviceInput = newVideoDeviceInput;
-            self.videoDevice = newVideoDevice;
-        }
-        else {
-            [self.session addInput:self.videoDeviceInput];
-        }
-        
-        AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-        if ( connection.isVideoStabilizationSupported ) {
-            connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-        }
-        
-        [self.session commitConfiguration];
-        
-        dispatch_async( dispatch_get_main_queue(), ^{
-            [self configureManualHUD];
-            
-            //			self.cameraButton.enabled = YES;
-            self.recordButton.enabled = YES;
-            //			self.photoButton.enabled = YES;
-            //			self.captureModeControl.enabled = YES;
-            self.HUDButton.enabled = YES;
-            self.manualHUD.userInteractionEnabled = YES;
-        } );
-    } );
-}
+//- (void)changeCameraWithDevice:(AVCaptureDevice *)newVideoDevice
+//{
+//    // Check if device changed
+//    if ( newVideoDevice == self.videoDevice ) {
+//        return;
+//    }
+//
+//    self.manualHUD.userInteractionEnabled = NO;
+//    //	self.cameraButton.enabled = NO;
+//    self.recordButton.enabled = NO;
+//    //	self.photoButton.enabled = NO;
+//    //	self.captureModeControl.enabled = NO;
+//    //    self.HUDButton.enabled = NO;
+//
+//    dispatch_async( self.sessionQueue, ^{
+//        AVCaptureDeviceInput *newVideoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:newVideoDevice error:nil];
+//
+//        [self.session beginConfiguration];
+//
+//        // Remove the existing device input first, since using the front and back camera simultaneously is not supported
+//        [self.session removeInput:self.videoDeviceInput];
+//        if ( [self.session canAddInput:newVideoDeviceInput] ) {
+//            [[NSNotificationCenter defaultCenter] removeObserver:self name:AVCaptureDeviceSubjectAreaDidChangeNotification object:self.videoDevice];
+//
+//            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:newVideoDevice];
+//
+//            [self.session addInput:newVideoDeviceInput];
+//            self.videoDeviceInput = newVideoDeviceInput;
+//            self.videoDevice = newVideoDevice;
+//        }
+//        else {
+//            [self.session addInput:self.videoDeviceInput];
+//        }
+//
+//        AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+////        if ( connection.isVideoStabilizationSupported ) {
+//            connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeCinematicExtended;
+//        printf("connection.activeVideoStabilizationMode == %ld", (long)connection.activeVideoStabilizationMode);
+////        }
+//
+//        [self.session commitConfiguration];
+//
+//        dispatch_async( dispatch_get_main_queue(), ^{
+//            [self configureManualHUD];
+//
+//            //			self.cameraButton.enabled = YES;
+//            self.recordButton.enabled = YES;
+//            //			self.photoButton.enabled = YES;
+//            //			self.captureModeControl.enabled = YES;
+//            self.HUDButton.enabled = YES;
+//            self.manualHUD.userInteractionEnabled = YES;
+//        } );
+//    } );
+//}
 
 - (IBAction)changeFocusMode:(id)sender
 {
@@ -733,7 +767,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeExposureDuration:(UISlider *)sender
 {
-//    UISlider *control = sender;
+    //    UISlider *control = sender;
     NSError *error = nil;
     
     double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000*1000*1000));
@@ -908,7 +942,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:previewLayer];
             previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
             movieConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
-//            movieConnection.videoOrientation = previewLayerVideoOrientation;
+            //            movieConnection.videoOrientation = previewLayerVideoOrientation;
             
             NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
             NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
@@ -1108,7 +1142,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
     else if ( context == ExposureDurationContext ) {
         if ( newValue && newValue != [NSNull null] ) {
-//            double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
+            //            double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
             AVCaptureExposureMode exposureMode = self.videoDevice.exposureMode;
             
             double exposureDurationSeconds = CMTimeGetSeconds( self.videoDevice.exposureDuration );

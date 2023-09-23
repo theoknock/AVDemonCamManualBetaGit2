@@ -11,9 +11,9 @@
 		7A49F5A81B38C02B003D7AF5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A49F5A61B38C02B003D7AF5 /* Main.storyboard */; };
 		7A49F5B61B38C094003D7AF5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A49F5B41B38C094003D7AF5 /* Launch Screen.storyboard */; };
 		7A49F5BD1B38C0B6003D7AF5 /* AVCamManualAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A49F5B81B38C0B6003D7AF5 /* AVCamManualAppDelegate.m */; };
-		7A49F5BE1B38C0B6003D7AF5 /* AVCamManualCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A49F5BA1B38C0B6003D7AF5 /* AVCamManualCameraViewController.m */; };
 		7A49F5BF1B38C0B6003D7AF5 /* AVCamManualPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A49F5BC1B38C0B6003D7AF5 /* AVCamManualPreviewView.m */; };
 		7A49F5C31B38C0F3003D7AF5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A49F5C21B38C0F3003D7AF5 /* Images.xcassets */; };
+		B90FEDAF2ABEE1E500F4F5CA /* AVCamManualCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B90FEDAE2ABEE1E500F4F5CA /* AVCamManualCameraViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,11 +25,11 @@
 		7A49F5B71B38C0B6003D7AF5 /* AVCamManualAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamManualAppDelegate.h; sourceTree = "<group>"; };
 		7A49F5B81B38C0B6003D7AF5 /* AVCamManualAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamManualAppDelegate.m; sourceTree = "<group>"; wrapsLines = 0; };
 		7A49F5B91B38C0B6003D7AF5 /* AVCamManualCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamManualCameraViewController.h; sourceTree = "<group>"; wrapsLines = 0; };
-		7A49F5BA1B38C0B6003D7AF5 /* AVCamManualCameraViewController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = AVCamManualCameraViewController.m; sourceTree = "<group>"; wrapsLines = 0; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7A49F5BB1B38C0B6003D7AF5 /* AVCamManualPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamManualPreviewView.h; sourceTree = "<group>"; };
 		7A49F5BC1B38C0B6003D7AF5 /* AVCamManualPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamManualPreviewView.m; sourceTree = "<group>"; };
 		7A49F5C01B38C0DF003D7AF5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A49F5C21B38C0F3003D7AF5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B90FEDAE2ABEE1E500F4F5CA /* AVCamManualCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamManualCameraViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -59,8 +59,8 @@
 				7A49F5BB1B38C0B6003D7AF5 /* AVCamManualPreviewView.h */,
 				7A49F5BC1B38C0B6003D7AF5 /* AVCamManualPreviewView.m */,
 				7A49F5B91B38C0B6003D7AF5 /* AVCamManualCameraViewController.h */,
+				B90FEDAE2ABEE1E500F4F5CA /* AVCamManualCameraViewController.m */,
 				7A49F5C21B38C0F3003D7AF5 /* Images.xcassets */,
-				7A49F5BA1B38C0B6003D7AF5 /* AVCamManualCameraViewController.m */,
 				7A49F5C01B38C0DF003D7AF5 /* Info.plist */,
 				7A49F5A61B38C02B003D7AF5 /* Main.storyboard */,
 				7A49F5B41B38C094003D7AF5 /* Launch Screen.storyboard */,
@@ -140,8 +140,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A49F59F1B38C02B003D7AF5 /* main.m in Sources */,
-				7A49F5BE1B38C0B6003D7AF5 /* AVCamManualCameraViewController.m in Sources */,
 				7A49F5BF1B38C0B6003D7AF5 /* AVCamManualPreviewView.m in Sources */,
+				B90FEDAF2ABEE1E500F4F5CA /* AVCamManualCameraViewController.m in Sources */,
 				7A49F5BD1B38C0B6003D7AF5 /* AVCamManualAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

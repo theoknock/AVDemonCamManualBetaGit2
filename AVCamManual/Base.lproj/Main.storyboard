@@ -17,13 +17,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BUILD 7.1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yrk-Tw-Xac">
-                                <rect key="frame" x="367.33333333333331" y="888" width="41.666666666666686" height="11"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="BUILD 7.2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yrk-Tw-Xac">
+                                <rect key="frame" x="367" y="887" width="43" height="11"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="9"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FPS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UxY-nB-Ge6">
+                                <rect key="frame" x="210.33333333333334" y="887" width="17.333333333333343" height="11"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="9"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="fSz-dY-3y2">
-                                <rect key="frame" x="0.0" y="58.333333333333314" width="430" height="816"/>
+                                <rect key="frame" x="0.0" y="58.333333333333314" width="430" height="816.00000000000023"/>
                                 <color key="tintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </imageView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gwL-zO-1Pw">
@@ -611,15 +617,17 @@
                             <constraint firstItem="vRU-a6-qp8" firstAttribute="height" secondItem="9Za-05-zwY" secondAttribute="height" id="0kS-uq-QAV"/>
                             <constraint firstItem="amH-FF-rBy" firstAttribute="leadingMargin" secondItem="9Za-05-zwY" secondAttribute="leadingMargin" id="3H1-Hp-xdr"/>
                             <constraint firstItem="fSz-dY-3y2" firstAttribute="leading" secondItem="twQ-td-cHY" secondAttribute="leading" id="4ce-YJ-Fhb"/>
-                            <constraint firstItem="Yrk-Tw-Xac" firstAttribute="trailing" secondItem="9Za-05-zwY" secondAttribute="trailing" constant="-21" id="72B-ze-JDl"/>
+                            <constraint firstItem="Yrk-Tw-Xac" firstAttribute="trailing" secondItem="9Za-05-zwY" secondAttribute="trailingMargin" id="72B-ze-JDl"/>
+                            <constraint firstItem="UxY-nB-Ge6" firstAttribute="bottom" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="GjX-XC-8z2"/>
                             <constraint firstItem="amH-FF-rBy" firstAttribute="bottomMargin" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="HBS-iO-4EN"/>
-                            <constraint firstItem="Yrk-Tw-Xac" firstAttribute="bottom" secondItem="9Za-05-zwY" secondAttribute="bottom" constant="-33" id="Oi4-vv-bvb"/>
+                            <constraint firstItem="Yrk-Tw-Xac" firstAttribute="bottom" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="Oi4-vv-bvb"/>
                             <constraint firstItem="amH-FF-rBy" firstAttribute="trailingMargin" secondItem="9Za-05-zwY" secondAttribute="trailingMargin" id="PsD-S2-rFd"/>
                             <constraint firstItem="ofA-R8-0eg" firstAttribute="leadingMargin" secondItem="9Za-05-zwY" secondAttribute="leadingMargin" id="Q3C-lj-4Xu"/>
                             <constraint firstItem="vRU-a6-qp8" firstAttribute="centerX" secondItem="9Za-05-zwY" secondAttribute="centerX" id="TOf-bD-0he"/>
                             <constraint firstItem="ofA-R8-0eg" firstAttribute="bottomMargin" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="Vmx-oV-zsf"/>
                             <constraint firstItem="gwL-zO-1Pw" firstAttribute="centerX" secondItem="9Za-05-zwY" secondAttribute="centerX" id="Xpm-3m-FZY"/>
                             <constraint firstItem="amH-FF-rBy" firstAttribute="topMargin" secondItem="9Za-05-zwY" secondAttribute="topMargin" id="ZdH-RE-8YC"/>
+                            <constraint firstItem="UxY-nB-Ge6" firstAttribute="centerX" secondItem="mcl-en-N2e" secondAttribute="centerX" id="b0G-qd-zmq"/>
                             <constraint firstItem="fSz-dY-3y2" firstAttribute="centerX" secondItem="9Za-05-zwY" secondAttribute="centerX" id="bdS-a6-An0"/>
                             <constraint firstItem="fSz-dY-3y2" firstAttribute="top" secondItem="twQ-td-cHY" secondAttribute="top" id="hhO-4s-87N"/>
                             <constraint firstItem="vRU-a6-qp8" firstAttribute="width" secondItem="9Za-05-zwY" secondAttribute="width" id="jM2-hX-Uxf"/>
@@ -639,6 +647,7 @@
                         <outlet property="exposureDurationSlider" destination="7R6-CN-WmZ" id="bsY-ft-Wyy"/>
                         <outlet property="exposureModeControl" destination="vvO-Ky-Czn" id="pqH-oy-Ju7"/>
                         <outlet property="focusModeControl" destination="ktg-mg-Ejd" id="AWo-pJ-qt9"/>
+                        <outlet property="fpsLabel" destination="UxY-nB-Ge6" id="koM-xI-Flo"/>
                         <outlet property="grayWorldButton" destination="1XR-0K-p1z" id="rte-6V-uYi"/>
                         <outlet property="lensPositionSlider" destination="TV0-Z0-OUU" id="LvC-Bw-06A"/>
                         <outlet property="manualHUD" destination="amH-FF-rBy" id="5GY-L7-Ddm"/>
