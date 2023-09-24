@@ -165,6 +165,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 dispatch_async( dispatch_get_main_queue(), ^{
                     self.recordButton.enabled = YES;
                     self.HUDButton.enabled = YES;
+                    
                 } );
                 
                 
@@ -256,14 +257,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
     UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
     
     if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
-        AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-        
-        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
-        previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
+        ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
     }
 }
 
@@ -475,9 +473,6 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     
     __autoreleasing NSError *error = nil;
     
-    ({
-        
-    });
     [self.session beginConfiguration];
     
     self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
@@ -528,9 +523,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             }
         } );
         
-        [self configureCameraForHighestFrameRate:self.videoDevice];
-      
-         
+//        [self configureCameraForHighestFrameRate:self.videoDevice];
+        
+        
     }
     else {
         NSLog( @"Could not add video device input to the session" );
@@ -682,6 +677,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeLensPosition:(UISlider *)sender
 {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+    });
+    
     __autoreleasing NSError *error = nil;
     
     if ( [self.videoDevice lockForConfiguration:&error] ) {
@@ -939,10 +938,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
             
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
-//                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
-//            });
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                UIApplication.sharedApplication.idleTimerDisabled = TRUE;
+                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
+                //                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
+            });
         });
     }
     else {
@@ -953,6 +953,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         });
         dispatch_async( self.sessionQueue, ^{
             [self.movieFileOutput stopRecording];
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                UIApplication.sharedApplication.idleTimerDisabled = FALSE;
+                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
+                //                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
+            });
         });
     }
 }
@@ -1106,8 +1111,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 AVCaptureExposureMode oldMode = [oldValue intValue];
                 
                 if ( oldMode != newMode && oldMode == AVCaptureExposureModeCustom ) {
-                    NSError *error = nil;
-                    [self configureCameraForHighestFrameRate:self.videoDevice];
+//                    if ( [self.videoDevice lockForConfiguration:NULL] == YES ) {
+//                        self.videoDevice.activeVideoMinFrameDuration = kCMTimeInvalid;
+//                        self.videoDevice.activeVideoMaxFrameDuration = kCMTimeInvalid;
+//                        [self.videoDevice unlockForConfiguration];
+//                    }
                 }
             }
             
