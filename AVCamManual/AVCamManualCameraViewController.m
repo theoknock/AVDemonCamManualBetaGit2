@@ -12,6 +12,7 @@
 
 @import AVFoundation;
 @import Photos;
+@import CoreFoundation;
 
 #import "AVCamManualCameraViewController.h"
 #import "AVCamManualPreviewView.h"
@@ -86,6 +87,8 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 @property (nonatomic) AVCaptureDeviceInput *videoDeviceInput;
 @property (nonatomic) AVCaptureDeviceDiscoverySession *videoDeviceDiscoverySession;
 @property (nonatomic) AVCaptureDevice *videoDevice;
+@property (nonatomic) AVCaptureConnection *videoCaptureConnection;
+@property (nonatomic) AVCaptureDeviceRotationCoordinator * videoDeviceRotationCoordinator;
 
 // Utilities
 @property (nonatomic) AVCamManualSetupResult setupResult;
@@ -96,6 +99,43 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 
 @implementation AVCamManualCameraViewController
 
+//typedef typeof(UIView *)TouchControlView;
+//static void (^position_control_using_touch_point)(UITouch *) = ^ (UITouch * touch) {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [touch.view setCenter:[touch preciseLocationInView:touch.view.superview]];
+//    });
+//};
+//
+//- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    UITouch * touch = event.allTouches.anyObject;// touches.anyObject;
+//    if ([touch.view isKindOfClass:[UISlider class]]) {
+//        position_control_using_touch_point(touch);
+//    }
+//}
+//
+//- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    printf("%s", __PRETTY_FUNCTION__);
+//    UITouch * touch = touches.anyObject;
+//    if ([touch.view isKindOfClass:[UISlider class]])
+//        position_control_using_touch_point(touch);
+//}
+//
+//- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    // To-Do: return slider to normal position
+//    UITouch * touch = touches.anyObject;
+//    if ([touch.view isKindOfClass:[UISlider class]])
+//        position_control_using_touch_point(touch);
+//    
+//}
+//
+//- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    UITouch * touch = touches.anyObject;
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        // To-Do: return slider to normal position
+////        [touch.view setCenter:[touch precisePreviousLocationInView:touch.view.superview]];
+//    });
+//}
+//}
 
 static const double kVideoZoomFactorPowerCoefficient = 3.333f; // Higher numbers will give the slider more sensitivity at shorter durations
 static const float kExposureDurationPower = 5.f; // Higher numbers will give the slider more sensitivity at shorter durations
@@ -115,8 +155,6 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     [self.coverView setHidden:TRUE];
     [self.coverView setAlpha:0.0];
 }
-
-
 
 - (IBAction)toggleDisplay:(UIButton *)sender {
     [self.coverView setHidden:FALSE];
@@ -153,9 +191,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                     [self.session addOutput:movieFileOutput];
                     self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
                     AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-                    if ( connection.isVideoStabilizationSupported )
-                        connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-                    printf("connection.activeVideoStabilizationMode == %ld", (long)connection.activeVideoStabilizationMode);
+                    connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+                    
+                    AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:((AVCaptureVideoPreviewLayer *)self.previewView.layer)];
+                    connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+                    
+                    self.videoDeviceRotationCoordinator = rotation_coord;
+                    self.videoCaptureConnection = connection;
+                    
                     [self.session commitConfiguration];
                 });
                 
@@ -260,8 +303,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
     
     if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
-        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
-        ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+//        AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
+        ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
     }
 }
 
@@ -519,11 +562,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
                 AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
                 AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:previewLayer];
-                previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
+                ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
             }
         } );
         
-//        [self configureCameraForHighestFrameRate:self.videoDevice];
+        //        [self configureCameraForHighestFrameRate:self.videoDevice];
         
         
     }
@@ -918,7 +961,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 {
     AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
     AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
-    previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
+    previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
     if ( ! self.movieFileOutput.isRecording ) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [sender setAlpha:.15];
@@ -928,10 +971,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             if ( [UIDevice currentDevice].isMultitaskingSupported ) {
                 self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
             }
-            AVCaptureConnection *movieConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-            AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:previewLayer];
-            previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
-            movieConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelCapture;
+//            AVCaptureConnection *movieConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+//            AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:previewLayer];
+//            previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+//            self.videoCaptureConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
             //            movieConnection.videoOrientation = previewLayerVideoOrientation;
             
             NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
@@ -1111,11 +1154,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 AVCaptureExposureMode oldMode = [oldValue intValue];
                 
                 if ( oldMode != newMode && oldMode == AVCaptureExposureModeCustom ) {
-//                    if ( [self.videoDevice lockForConfiguration:NULL] == YES ) {
-//                        self.videoDevice.activeVideoMinFrameDuration = kCMTimeInvalid;
-//                        self.videoDevice.activeVideoMaxFrameDuration = kCMTimeInvalid;
-//                        [self.videoDevice unlockForConfiguration];
-//                    }
+                    //                    if ( [self.videoDevice lockForConfiguration:NULL] == YES ) {
+                    //                        self.videoDevice.activeVideoMinFrameDuration = kCMTimeInvalid;
+                    //                        self.videoDevice.activeVideoMaxFrameDuration = kCMTimeInvalid;
+                    //                        [self.videoDevice unlockForConfiguration];
+                    //                    }
                 }
             }
             

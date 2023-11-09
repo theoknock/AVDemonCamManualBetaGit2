@@ -6,7 +6,8 @@
  View controller for camera interface.
  */
 
-@import UIKit;
+#import <UIKit/UIKit.h>
+
 
 #import "AVCamManualAppDelegate.h"
 
@@ -38,7 +39,7 @@ static double (^_Nonnull(^ _Nonnull set_lens_position_scale)(const double, const
 
 @class AVCamManualAppDelegate;
 
-@interface AVCamManualCameraViewController : UIViewController <MovieAppEventDelegate, UIGestureRecognizerDelegate>
+@interface AVCamManualCameraViewController : UIViewController <MovieAppEventDelegate>
 
 @property (nonatomic) AVCaptureMovieFileOutput * _Nullable movieFileOutput;
 - (void)captureOutput:(AVCaptureFileOutput * _Nullable)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL * _Nonnull)outputFileURL fromConnections:(NSArray * _Nonnull)connections error:(NSError * _Nullable)error;

@@ -25,11 +25,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>AVDemonCamManual records video</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string></string>
+	<string>AVDemonCamManual records sound</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string></string>
+	<string>AVDemonCamManual exports media to Photo Library</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>
 	<key>UIMainStoryboardFile</key>
