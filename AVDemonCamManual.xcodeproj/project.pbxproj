@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -104,7 +104,6 @@
 				};
 			};
 			buildConfigurationList = 7A49F5951B38C02B003D7AF5 /* Build configuration list for PBXProject "AVDemonCamManual" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,6 +111,7 @@
 				Base,
 			);
 			mainGroup = 7A49F5911B38C02B003D7AF5;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 7A49F59B1B38C02B003D7AF5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -285,16 +285,16 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = N9987K9442;
 				INFOPLIST_FILE = "$(SRCROOT)/AVCamManual/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AVDemonCamManualBeta;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.blogspot.demonicactivity.AVDemonCamManualBeta;
 				PRODUCT_NAME = AVDemonCamManual;
 				PROVISIONING_PROFILE = "";
@@ -313,16 +313,16 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = N9987K9442;
 				INFOPLIST_FILE = "$(SRCROOT)/AVCamManual/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AVDemonCamManualBeta;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.blogspot.demonicactivity.AVDemonCamManualBeta;
 				PRODUCT_NAME = AVDemonCamManual;
 				PROVISIONING_PROFILE = "";
