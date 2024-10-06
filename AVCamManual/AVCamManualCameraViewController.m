@@ -817,14 +817,19 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         NSLog( @"Could not lock device for configuration: %@", error );
     }
 }
-- (IBAction)rescaleLensPositionSliderRange:(UILongPressGestureRecognizer *)sender {
-    printf("\nrescaled_value %f to %f\n", (self.lensPositionSlider.value), property_control_value(self.lensPositionSlider.value, 0.f, 1.f, 1.f, 0.f));
-    rescale_lens_position = set_lens_position_scale(0.f, 1.f, self.lensPositionSlider.value - 0.10, self.lensPositionSlider.value + 0.10);
-    
-}
+
+#pragma mark Lens Position Configuration
+
 - (IBAction)unlockLensPositionConfiguration:(UISlider *)sender {
     dispatch_async(self.sessionQueue, ^{
         [self.videoDevice unlockForConfiguration];
+    });
+}
+
+- (IBAction)changeLensPosition:(UISlider *)sender {
+    float value = sender.value;
+    dispatch_async( self.sessionQueue, ^{
+        [self.videoDevice setFocusModeLockedWithLensPosition:value completionHandler:nil];
     });
 }
 
@@ -839,6 +844,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     });
 }
 
+
+- (IBAction)rescaleLensPositionSliderRange:(UILongPressGestureRecognizer *)sender {
+    printf("\nrescaled_value %f to %f\n", (self.lensPositionSlider.value), property_control_value(self.lensPositionSlider.value, 0.f, 1.f, 1.f, 0.f));
+    rescale_lens_position = set_lens_position_scale(0.f, 1.f, self.lensPositionSlider.value - 0.10, self.lensPositionSlider.value + 0.10);
+}
+
 - (IBAction)magnifyLensPositionSlider:(UISlider *)sender forEvent:(UIEvent *)event {
     printf("%s\n", __PRETTY_FUNCTION__);
     // set new colors
@@ -848,14 +859,6 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     [sender setBackgroundColor:[UIColor colorWithWhite:1.f alpha:0.15f]];
     
     rescale_lens_position = set_lens_position_scale(0.f, 1.f, (sender.value - 0.10), (sender.value + 0.15));
-}
-
-- (IBAction)changeLensPosition:(UISlider *)sender
-{
-    float value = sender.value;
-    dispatch_async( self.sessionQueue, ^{
-        [self.videoDevice setFocusModeLockedWithLensPosition:value completionHandler:nil];
-    });
 }
 
 - (IBAction)restoreLensSlider:(UISlider *)sender forEvent:(UIEvent *)event {
@@ -924,6 +927,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
 }
 
+#pragma mark Exposure Duration Configuration
+
 - (IBAction)lockExposureDurationConfiguration:(UISlider *)sender {
     dispatch_async(self.sessionQueue, ^{
         __autoreleasing NSError *error = nil;
@@ -935,9 +940,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     });
 }
 
-
-- (IBAction)changeExposureDuration:(UISlider *)sender
-{
+- (IBAction)changeExposureDuration:(UISlider *)sender {
     double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000*1000*1000));
     double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000*1000*1000));
     double exposureDurationSeconds = control_property_value(sender.value, minExposureDurationSeconds, maxExposureDurationSeconds, kExposureDurationPower, 0.f);
@@ -953,11 +956,21 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     });
 }
 
-- (IBAction)changeTorchLevel:(UISlider *)sender
-{
-    @try {
+
+
+#pragma mark Torch Level Configuration
+
+- (IBAction)unlockTorchLevelConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        [self.videoDevice unlockForConfiguration];
+    });
+}
+
+- (IBAction)changeTorchLevel:(UISlider *)sender {
+//    @try {
         __autoreleasing NSError *error;
-        if ([_videoDevice lockForConfiguration:&error] && ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious)) {
+//        if ([_videoDevice lockForConfiguration:&error] && ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious)) {
+    if ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious) {
             if (sender.value != 0)
                 [self->_videoDevice setTorchModeOnWithLevel:sender.value error:&error];
             else
@@ -965,12 +978,25 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         } else {
             NSLog(@"Unable to adjust torch level; thermal state: %lu", [[NSProcessInfo processInfo] thermalState]);
         }
-    } @catch (NSException *exception) {
-        NSLog(@"AVCaptureDevice lockForConfiguration returned error\t%@", exception);
-    } @finally {
-        [_videoDevice unlockForConfiguration];
-    }
+//    } @catch (NSException *exception) {
+//        NSLog(@"AVCaptureDevice lockForConfiguration returned error\t%@", exception);
+//    } @finally {
+//        [_videoDevice unlockForConfiguration];
+//    }
 }
+
+- (IBAction)lockTorchLevelConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
+            NSLog( @"Could not lock device for configuration: %@", error );
+        }
+    });
+}
+
+
 
 - (IBAction)changeISO:(UISlider *)sender
 {
