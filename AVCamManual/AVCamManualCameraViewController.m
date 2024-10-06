@@ -899,6 +899,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     } );
 }
 
+
+
 - (IBAction)changeExposureMode:(id)sender
 {
     UISegmentedControl *control = sender;
@@ -922,22 +924,33 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
 }
 
+- (IBAction)lockExposureDurationConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
+            NSLog( @"Could not lock device for configuration: %@", error );
+        }
+    });
+}
+
+
 - (IBAction)changeExposureDuration:(UISlider *)sender
 {
-    //    UISlider *control = sender;
-    NSError *error = nil;
-    
     double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000*1000*1000));
     double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000*1000*1000));
     double exposureDurationSeconds = control_property_value(sender.value, minExposureDurationSeconds, maxExposureDurationSeconds, kExposureDurationPower, 0.f);
     
-    if ( [self.videoDevice lockForConfiguration:&error] ) {
+    dispatch_async(self.sessionQueue, ^{
         [self.videoDevice setExposureModeCustomWithDuration:CMTimeMakeWithSeconds( exposureDurationSeconds, 1000*1000*1000 )  ISO:AVCaptureISOCurrent completionHandler:nil];
+    });
+}
+
+- (IBAction)unlockExposureDurationConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
         [self.videoDevice unlockForConfiguration];
-    }
-    else {
-        NSLog( @"Could not lock device for configuration: %@", error );
-    }
+    });
 }
 
 - (IBAction)changeTorchLevel:(UISlider *)sender
