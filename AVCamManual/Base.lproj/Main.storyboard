@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="zFy-Vn-e8f">
-    <device id="retina6_72" orientation="portrait" appearance="dark"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23502" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="zFy-Vn-e8f">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23504"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -14,20 +14,20 @@
             <objects>
                 <viewController wantsFullScreenLayout="YES" modalPresentationStyle="fullScreen" id="zFy-Vn-e8f" customClass="AVCamManualCameraViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleAspectFit" preservesSuperviewLayoutMargins="YES" id="9Za-05-zwY" customClass="AVCamManualPreviewView">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Commit ID 12e38b3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yrk-Tw-Xac">
-                                <rect key="frame" x="322.66666666666669" y="887" width="87.333333333333314" height="11"/>
+                                <rect key="frame" x="289.66666666666669" y="807" width="87.333333333333314" height="11"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="9"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="fSz-dY-3y2">
-                                <rect key="frame" x="0.0" y="58.333333333333314" width="430" height="816.00000000000023"/>
+                                <rect key="frame" x="0.0" y="58" width="393" height="736"/>
                                 <color key="tintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </imageView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gwL-zO-1Pw">
-                                <rect key="frame" x="139" y="881" width="152" height="41"/>
+                                <rect key="frame" x="120.66666666666669" y="801" width="152" height="41"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <state key="normal" title="Tap to Resume">
@@ -43,10 +43,10 @@
                                 </connections>
                             </button>
                             <view opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="amH-FF-rBy" userLabel="Manual HUD">
-                                <rect key="frame" x="12" y="51" width="406" height="855"/>
+                                <rect key="frame" x="8" y="51" width="377" height="775"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" contentMode="scaleAspectFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="543-NV-2bk">
-                                        <rect key="frame" x="8" y="8" width="390" height="43"/>
+                                        <rect key="frame" x="8" y="8" width="361" height="43"/>
                                         <color key="backgroundColor" systemColor="systemFillColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="42" id="zbX-uC-FJk"/>
@@ -105,13 +105,13 @@
                                         </connections>
                                     </segmentedControl>
                                     <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Akx-Oj-5Sj" userLabel="Controls View">
-                                        <rect key="frame" x="8" y="50" width="390" height="797"/>
+                                        <rect key="frame" x="8" y="50" width="361" height="717"/>
                                         <subviews>
                                             <view hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XXb-cy-BED" userLabel="ManualHUD Torch Level View">
-                                                <rect key="frame" x="8" y="8" width="374" height="781"/>
+                                                <rect key="frame" x="8" y="8" width="345" height="701"/>
                                                 <subviews>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VNK-3C-FPF">
-                                                        <rect key="frame" x="6" y="8" width="362" height="91"/>
+                                                        <rect key="frame" x="6" y="8" width="333" height="91"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="90" id="YNZ-Ed-S6o"/>
                                                         </constraints>
@@ -145,10 +145,10 @@
                                                 </constraints>
                                             </view>
                                             <view hidden="YES" opaque="NO" alpha="0.0" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MDr-ZD-uoq">
-                                                <rect key="frame" x="8" y="8" width="374" height="781"/>
+                                                <rect key="frame" x="8" y="8" width="345" height="701"/>
                                                 <subviews>
                                                     <slider opaque="NO" contentMode="scaleToFill" highlighted="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="TV0-Z0-OUU">
-                                                        <rect key="frame" x="6" y="68" width="362" height="61"/>
+                                                        <rect key="frame" x="6" y="68" width="333" height="61"/>
                                                         <accessibility key="accessibilityConfiguration">
                                                             <accessibilityTraits key="traits" updatesFrequently="YES"/>
                                                         </accessibility>
@@ -174,11 +174,13 @@
                                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <connections>
                                                             <action selector="changeLensPosition:" destination="zFy-Vn-e8f" eventType="valueChanged" id="0nI-xS-4od"/>
+                                                            <action selector="lockLensPositionConfiguration:" destination="zFy-Vn-e8f" eventType="touchDown" id="cX7-OE-xqJ"/>
+                                                            <action selector="unlockLensPositionConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="cXh-Iw-dJT"/>
                                                             <outletCollection property="gestureRecognizers" destination="bod-zS-Hi9" appends="YES" id="gtv-qX-gNV"/>
                                                         </connections>
                                                     </slider>
                                                     <segmentedControl opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
-                                                        <rect key="frame" x="8" y="8" width="358" height="57"/>
+                                                        <rect key="frame" x="8" y="8" width="329" height="57"/>
                                                         <color key="backgroundColor" systemColor="systemFillColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="56" id="od8-lO-gXr"/>
@@ -221,10 +223,10 @@
                                                 </constraints>
                                             </view>
                                             <view hidden="YES" opaque="NO" alpha="0.0" tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iQT-Nx-cHE">
-                                                <rect key="frame" x="8" y="8" width="374" height="781"/>
+                                                <rect key="frame" x="8" y="8" width="345" height="701"/>
                                                 <subviews>
                                                     <segmentedControl opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="vvO-Ky-Czn">
-                                                        <rect key="frame" x="8" y="8" width="358" height="57"/>
+                                                        <rect key="frame" x="8" y="8" width="329" height="57"/>
                                                         <color key="backgroundColor" systemColor="systemFillColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="56" id="tCk-zN-ahQ"/>
@@ -255,7 +257,7 @@
                                                         </connections>
                                                     </segmentedControl>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="7R6-CN-WmZ">
-                                                        <rect key="frame" x="6" y="56" width="362" height="61"/>
+                                                        <rect key="frame" x="6" y="56" width="333" height="61"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="60" id="r4m-iW-fZW"/>
@@ -281,7 +283,7 @@
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="eau-wv-dU0">
-                                                        <rect key="frame" x="6" y="108" width="362" height="61"/>
+                                                        <rect key="frame" x="6" y="108" width="333" height="61"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="60" id="7UD-sH-Uz2"/>
                                                         </constraints>
@@ -320,10 +322,10 @@
                                                 </constraints>
                                             </view>
                                             <view hidden="YES" opaque="NO" alpha="0.0" tag="3" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tCR-0s-Q5n" userLabel="ManualHUD Video Zoom Factor View">
-                                                <rect key="frame" x="8" y="8" width="374" height="781"/>
+                                                <rect key="frame" x="8" y="8" width="345" height="701"/>
                                                 <subviews>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="uyM-gg-aDC" userLabel="Zoom Factor Slider">
-                                                        <rect key="frame" x="6" y="8" width="362" height="91"/>
+                                                        <rect key="frame" x="6" y="8" width="333" height="91"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="90" id="Pqb-eP-5D0"/>
                                                         </constraints>
@@ -356,10 +358,10 @@
                                                 </constraints>
                                             </view>
                                             <view hidden="YES" opaque="NO" alpha="0.0" tag="4" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="puZ-nU-nwq" userLabel="ManualHUD White Balance View">
-                                                <rect key="frame" x="8" y="8" width="374" height="781"/>
+                                                <rect key="frame" x="8" y="8" width="345" height="701"/>
                                                 <subviews>
                                                     <segmentedControl opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Pez-TP-eVs">
-                                                        <rect key="frame" x="8" y="8" width="358" height="57"/>
+                                                        <rect key="frame" x="8" y="8" width="329" height="57"/>
                                                         <color key="backgroundColor" systemColor="systemFillColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="56" id="ggH-6s-cER"/>
@@ -390,7 +392,7 @@
                                                         </connections>
                                                     </segmentedControl>
                                                     <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="g5Y-v1-MKt">
-                                                        <rect key="frame" x="6" y="56" width="304.33333333333331" height="61"/>
+                                                        <rect key="frame" x="6" y="56" width="275.33333333333331" height="61"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="60" id="rXE-dO-ejJ"/>
                                                         </constraints>
@@ -403,7 +405,7 @@
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="c2O-fC-f8E">
-                                                        <rect key="frame" x="6" y="108" width="304.33333333333331" height="61"/>
+                                                        <rect key="frame" x="6" y="108" width="275.33333333333331" height="61"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="60" id="u8G-b5-90l"/>
@@ -417,7 +419,7 @@
                                                         </connections>
                                                     </slider>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1XR-0K-p1z" userLabel="GrayWorld Button">
-                                                        <rect key="frame" x="300.33333333333331" y="56" width="65.666666666666686" height="110"/>
+                                                        <rect key="frame" x="271.33333333333331" y="56" width="65.666666666666686" height="110"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="110" id="DaQ-E3-lTS"/>
                                                         </constraints>
@@ -487,7 +489,7 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ofA-R8-0eg">
-                                <rect key="frame" x="20" y="808" width="390" height="90"/>
+                                <rect key="frame" x="16" y="762" width="361" height="90"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleAspectFit" highlighted="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pSZ-Pn-wAW" userLabel="HUD Display Button">
                                         <rect key="frame" x="0.0" y="19" width="72.333333333333329" height="52"/>
@@ -515,7 +517,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mcl-en-N2e">
-                                        <rect key="frame" x="155.33333333333334" y="13" width="87" height="64"/>
+                                        <rect key="frame" x="141" y="13" width="87" height="64"/>
                                         <color key="tintColor" systemColor="systemYellowColor"/>
                                         <state key="normal">
                                             <imageReference key="image" image="record.circle" catalog="system" renderingMode="hierarchical">
@@ -546,11 +548,11 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <action selector="toggleMovieRecording:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="kRM-DR-2H2"/>
+                                            <action selector="toggleMovieRecording:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="PI9-SI-6Mw"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" tag="-3" contentMode="scaleAspectFit" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8MA-oo-st4" userLabel="Cover View Button">
-                                        <rect key="frame" x="325.33333333333331" y="19" width="64.666666666666686" height="52"/>
+                                        <rect key="frame" x="296.33333333333331" y="19" width="64.666666666666686" height="52"/>
                                         <state key="normal">
                                             <imageReference key="image" image="iphone.slash" catalog="system" symbolScale="medium" renderingMode="hierarchical">
                                                 <hierarchicalColors>
@@ -581,10 +583,10 @@
                                 </constraints>
                             </stackView>
                             <view hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vRU-a6-qp8">
-                                <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <subviews>
                                     <button opaque="NO" tag="-3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wuj-OT-Soh" userLabel="Toggle Cover View Button">
-                                        <rect key="frame" x="186.66666666666666" y="433.33333333333331" width="57" height="65.333333333333314"/>
+                                        <rect key="frame" x="168" y="393.33333333333331" width="57" height="65.333333333333314"/>
                                         <color key="tintColor" systemColor="systemGray5Color"/>
                                         <state key="normal" image="iphone.slash" catalog="system">
                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="56"/>
@@ -611,6 +613,7 @@
                             <constraint firstItem="vRU-a6-qp8" firstAttribute="height" secondItem="9Za-05-zwY" secondAttribute="height" id="0kS-uq-QAV"/>
                             <constraint firstItem="amH-FF-rBy" firstAttribute="leadingMargin" secondItem="9Za-05-zwY" secondAttribute="leadingMargin" id="3H1-Hp-xdr"/>
                             <constraint firstItem="fSz-dY-3y2" firstAttribute="leading" secondItem="twQ-td-cHY" secondAttribute="leading" id="4ce-YJ-Fhb"/>
+                            <constraint firstItem="Yrk-Tw-Xac" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="gwL-zO-1Pw" secondAttribute="trailing" constant="8" symbolic="YES" id="4iZ-9a-L7B"/>
                             <constraint firstItem="Yrk-Tw-Xac" firstAttribute="trailing" secondItem="9Za-05-zwY" secondAttribute="trailingMargin" id="72B-ze-JDl"/>
                             <constraint firstItem="amH-FF-rBy" firstAttribute="bottomMargin" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="HBS-iO-4EN"/>
                             <constraint firstItem="Yrk-Tw-Xac" firstAttribute="bottom" secondItem="9Za-05-zwY" secondAttribute="bottomMargin" id="Oi4-vv-bvb"/>
@@ -688,8 +691,8 @@
         <image name="iphone.slash" catalog="system" width="112" height="128"/>
         <image name="light.max" catalog="system" width="128" height="72"/>
         <image name="light.min" catalog="system" width="128" height="75"/>
-        <image name="lock.open.rotation" catalog="system" width="128" height="112"/>
-        <image name="lock.rotation" catalog="system" width="128" height="112"/>
+        <image name="lock.open.rotation" catalog="system" width="128" height="119"/>
+        <image name="lock.rotation" catalog="system" width="128" height="119"/>
         <image name="m.circle" catalog="system" width="128" height="123"/>
         <image name="magnifyingglass.circle" catalog="system" width="128" height="123"/>
         <image name="minus.magnifyingglass" catalog="system" width="128" height="117"/>

@@ -184,125 +184,199 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
 }
 
-- (void)viewDidLoad
-{
+//- (void)viewDidLoad
+//{
+//    [super viewDidLoad];
+//
+//    [self.recordButton setImage:[UIImage systemImageNamed:@"stop.circle"] forState:UIControlStateSelected];
+//    [self.recordButton setImage:[UIImage systemImageNamed:@"record.circle"] forState:UIControlStateNormal];
+//
+//
+//    NSArray<NSString *> *deviceTypes = @[AVCaptureDeviceTypeBuiltInWideAngleCamera];
+//    self.videoDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+//
+//
+//
+//    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
+//    self.setupResult = AVCamManualSetupResultSuccess;
+//    switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
+//    {
+//        case AVAuthorizationStatusAuthorized:
+//        {
+//            __autoreleasing NSError *error = nil;
+//            ({ [self.session = [[AVCaptureSession alloc] init] beginConfiguration];
+//                {
+//                    [self.session setSessionPreset:AVCaptureSessionPreset3840x2160];
+//                    [self.session setAutomaticallyConfiguresCaptureDeviceForWideColor:TRUE];
+//                    // set device input here (above)
+//                    !(![self.session canAddInput:(self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:({
+//                        [({
+//                            [self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack] lockForConfiguration:&error];
+//                            {
+//                                @try {
+//                                    !(!error) ?: ^ (NSError ** error_t) {
+//                                        NSException* exception = [NSException
+//                                                                  exceptionWithName:(*error_t).domain
+//                                                                  reason:(*error_t).debugDescription
+//                                                                  userInfo:@{@"Error Code" : @((*error_t).code)}];
+//                                        @throw exception;
+//                                    }(&error);
+//
+//                                    [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+//                                    [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+//                                    [self.videoDevice setAutomaticallyEnablesLowLightBoostWhenAvailable:self.videoDevice.isLowLightBoostSupported];
+//
+//                                    AVCaptureDeviceFormat *bestFormat = nil;
+//                                    AVFrameRateRange *bestFrameRateRange = nil;
+//                                    for (AVCaptureDeviceFormat *format in [self.videoDevice formats]) {
+//                                        for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+//                                            if (range.maxFrameRate > bestFrameRateRange.maxFrameRate) {
+//                                                bestFormat = format;
+//                                                bestFrameRateRange = range;
+//                                            }
+//                                        }
+//                                    }
+//                                    if (bestFormat) {
+//                                        self.videoDevice.activeFormat = bestFormat;
+//                                        self.videoDevice.activeVideoMinFrameDuration = bestFrameRateRange.minFrameDuration;
+//                                        self.videoDevice.activeVideoMaxFrameDuration = bestFrameRateRange.maxFrameDuration;
+//                                    }
+//                                } @catch (NSException *exception) {
+//                                    NSLog(@"\n\nException configuring video device:\n\tException: %@\n\tDescription: %@\n\tError Code: %@\n",
+//                                          exception.name,
+//                                          exception.reason,
+//                                          exception.userInfo[@"Error Code"]);
+//                                }
+//                            }
+//                            self.videoDevice;
+//                        }) unlockForConfiguration];
+//                        self.videoDevice;
+//                    }) error:&error])]) ?: [self.session addInput:self.videoDeviceInput];
+//                    // set device output here (below)
+//                } [self.session commitConfiguration];
+//            });
+//
+//            ({ [self.videoCaptureConnection = [self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init] connectionWithMediaType:AVMediaTypeVideo] setPreferredVideoStabilizationMode:AVCaptureVideoStabilizationModeAuto];
+//                if ( [self.session canAddOutput:self.movieFileOutput] ) {
+//                    ({
+//                        [self.session addOutput:self.movieFileOutput];
+//                        self.videoCaptureConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+//                        self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+//                        self.videoCaptureConnection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview; // wrong -- not initialized
+//
+//                        dispatch_async( self.sessionQueue, ^{
+//                            [self configureCameraForHighestFrameRate:self.videoDevice];
+//                        });
+//                    });
+//                }
+//            });
+//
+//            [self.session commitConfiguration];
+//            self.previewView.session = self.session;
+//
+//            dispatch_async( dispatch_get_main_queue(), ^{
+//                UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+//                if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
+//                    self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
+//                    ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
+//                }
+//                self.recordButton.enabled = YES;
+//                self.HUDButton.enabled = YES;
+//            });
+//        }
+//
+//        case AVAuthorizationStatusNotDetermined:
+//        {
+//            dispatch_suspend( self.sessionQueue );
+//            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
+//                if ( ! granted ) {
+//                    self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
+//                }
+//                dispatch_resume( self.sessionQueue );
+//            }];
+//            break;
+//        }
+//        default:
+//        {
+//            self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
+//            break;
+//        }
+//            break;
+//    }
+//}
+- (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.recordButton setImage:[UIImage systemImageNamed:@"stop.circle"] forState:UIControlStateSelected];
-    [self.recordButton setImage:[UIImage systemImageNamed:@"record.circle"] forState:UIControlStateNormal];
+    // Initialize session
+    self.session = [[AVCaptureSession alloc] init];
+    [self.session beginConfiguration];
+    self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
+    self.session.automaticallyConfiguresCaptureDeviceForWideColor = YES;
     
+    NSError *error = nil;
     
-    NSArray<NSString *> *deviceTypes = @[AVCaptureDeviceTypeBuiltInWideAngleCamera];
-    self.videoDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+    // Add video input
+    self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera
+                                                          mediaType:AVMediaTypeVideo
+                                                           position:AVCaptureDevicePositionBack];
+    self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
+    if (!self.videoDeviceInput) {
+        NSLog(@"Error creating video device input: %@", error.localizedDescription);
+        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
+        [self.session commitConfiguration];
+        return;
+    }
+    if ([self.session canAddInput:self.videoDeviceInput]) {
+        [self.session addInput:self.videoDeviceInput];
+    } else {
+        NSLog(@"Could not add video device input to the session");
+        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
+        [self.session commitConfiguration];
+        return;
+    }
     
+    // Add audio input
+    AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+    AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
+    if (!audioDeviceInput) {
+        NSLog(@"Error creating audio device input: %@", error.localizedDescription);
+    } else if ([self.session canAddInput:audioDeviceInput]) {
+        [self.session addInput:audioDeviceInput];
+    } else {
+        NSLog(@"Could not add audio device input to the session");
+    }
     
+    // Add movie file output
+    self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
+    if ([self.session canAddOutput:self.movieFileOutput]) {
+        [self.session addOutput:self.movieFileOutput];
+        self.videoCaptureConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+        self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+    } else {
+        NSLog(@"Could not add movie file output to the session");
+        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
+        [self.session commitConfiguration];
+        return;
+    }
     
+    [self.session commitConfiguration];
+    
+    // Set the preview view's session
+    self.previewView.session = self.session;
+    
+    // Start the session on the session queue
     self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
-    self.setupResult = AVCamManualSetupResultSuccess;
-    switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
-    {
-        case AVAuthorizationStatusAuthorized:
-        {
-            __autoreleasing NSError *error = nil;
-            ({ [self.session = [[AVCaptureSession alloc] init] beginConfiguration];
-                {
-                    [self.session setSessionPreset:AVCaptureSessionPreset3840x2160];
-                    [self.session setAutomaticallyConfiguresCaptureDeviceForWideColor:TRUE];
-                    // set device input here (above)
-                    !(![self.session canAddInput:(self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:({
-                        [({
-                            [self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack] lockForConfiguration:&error];
-                            {
-                                @try {
-                                    !(!error) ?: ^ (NSError ** error_t) {
-                                        NSException* exception = [NSException
-                                                                  exceptionWithName:(*error_t).domain
-                                                                  reason:(*error_t).debugDescription
-                                                                  userInfo:@{@"Error Code" : @((*error_t).code)}];
-                                        @throw exception;
-                                    }(&error);
-                                    
-                                    [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
-                                    [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
-                                    [self.videoDevice setAutomaticallyEnablesLowLightBoostWhenAvailable:self.videoDevice.isLowLightBoostSupported];
-                                    
-                                    AVCaptureDeviceFormat *bestFormat = nil;
-                                    AVFrameRateRange *bestFrameRateRange = nil;
-                                    for (AVCaptureDeviceFormat *format in [self.videoDevice formats]) {
-                                        for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
-                                            if (range.maxFrameRate > bestFrameRateRange.maxFrameRate) {
-                                                bestFormat = format;
-                                                bestFrameRateRange = range;
-                                            }
-                                        }
-                                    }
-                                    if (bestFormat) {
-                                        self.videoDevice.activeFormat = bestFormat;
-                                        self.videoDevice.activeVideoMinFrameDuration = bestFrameRateRange.minFrameDuration;
-                                        self.videoDevice.activeVideoMaxFrameDuration = bestFrameRateRange.maxFrameDuration;
-                                    }
-                                } @catch (NSException *exception) {
-                                    printf("\n\nException configuring audio session:\n\tException: %s\n\tDescription: %s\n\tError Code: %lu\n\n",
-                                           [exception.name UTF8String],
-                                           [exception.debugDescription UTF8String],
-                                           ((NSNumber *)[exception.userInfo valueForKey:@"Error Code"]).unsignedIntegerValue);
-                                }
-                            }
-                            self.videoDevice;
-                        }) unlockForConfiguration];
-                        self.videoDevice;
-                    }) error:&error])]) ?: [self.session addInput:self.videoDeviceInput];
-                    // set device output here (below)
-                } [self.session commitConfiguration];
-            });
-            
-            ({ [self.videoCaptureConnection = [self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init] connectionWithMediaType:AVMediaTypeVideo] setPreferredVideoStabilizationMode:AVCaptureVideoStabilizationModeAuto];
-                if ( [self.session canAddOutput:self.movieFileOutput] ) {
-                    ({
-                        [self.session addOutput:self.movieFileOutput];
-                        self.videoCaptureConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-                        self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-                        self.videoCaptureConnection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview; // wrong -- not initialized
-                        
-                        dispatch_async( self.sessionQueue, ^{
-                            [self configureCameraForHighestFrameRate:self.videoDevice];
-                        });
-                    });
-                }
-            });
-            
-            [self.session commitConfiguration];
-            self.previewView.session = self.session;
-            
-            dispatch_async( dispatch_get_main_queue(), ^{
-                UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-                if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
-                    self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
-                    ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
-                }
+    dispatch_async(self.sessionQueue, ^{
+        [self.session startRunning];
+        self.sessionRunning = self.session.isRunning;
+        if (self.sessionRunning) {
+            dispatch_async(dispatch_get_main_queue(), ^{
                 self.recordButton.enabled = YES;
                 self.HUDButton.enabled = YES;
             });
         }
-            
-        case AVAuthorizationStatusNotDetermined:
-        {
-            dispatch_suspend( self.sessionQueue );
-            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
-                if ( ! granted ) {
-                    self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
-                }
-                dispatch_resume( self.sessionQueue );
-            }];
-            break;
-        }
-        default:
-        {
-            self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
-            break;
-        }
-            break;
-    }
+        
+    });
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -579,6 +653,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.videoDevice lockForConfiguration:&error];
         @try {
             [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+            [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
             [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
         } @catch (NSException *exception) {
             NSLog(@"Error setting focus mode: %@", error.description);
@@ -747,6 +822,18 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     rescale_lens_position = set_lens_position_scale(0.f, 1.f, self.lensPositionSlider.value - 0.10, self.lensPositionSlider.value + 0.10);
     
 }
+- (IBAction)unlockLensPositionConfiguration:(UISlider *)sender {
+    [self.videoDevice unlockForConfiguration];
+}
+
+- (IBAction)lockLensPositionConfiguration:(UISlider *)sender {
+    __autoreleasing NSError *error = nil;
+    if ([self.videoDevice lockForConfiguration:&error]) {
+        
+    } else {
+            NSLog( @"Could not lock device for configuration: %@", error );
+    }
+}
 
 - (IBAction)magnifyLensPositionSlider:(UISlider *)sender forEvent:(UIEvent *)event {
     printf("%s\n", __PRETTY_FUNCTION__);
@@ -761,19 +848,21 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeLensPosition:(UISlider *)sender
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async( self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
         
+//        if ( [self.videoDevice lockForConfiguration:&error] ) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [self.videoDevice setFocusModeLockedWithLensPosition:sender.value completionHandler:^(CMTime syncTime) {
+                    
+//                    [self.videoDevice unlockForConfiguration];
+                }];
+            });
+//        }
+//        else {
+//            NSLog( @"Could not lock device for configuration: %@", error );
+//        }
     });
-    
-    __autoreleasing NSError *error = nil;
-    
-    if ( [self.videoDevice lockForConfiguration:&error] ) {
-        [self.videoDevice setFocusModeLockedWithLensPosition:(*rescale_lens_position_t)(sender.value) completionHandler:nil];
-        [self.videoDevice unlockForConfiguration];
-    }
-    else {
-        NSLog( @"Could not lock device for configuration: %@", error );
-    }
 }
 - (IBAction)restoreLensSlider:(UISlider *)sender forEvent:(UIEvent *)event {
     [self restoreLensSlider_:sender forEvent:event];
@@ -998,50 +1087,81 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 #pragma mark Recording Movies
 
-- (IBAction)toggleMovieRecording:(UIButton *)sender
-{
-    //    AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-    //    AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
-    //    previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
-    if ( ! self.movieFileOutput.isRecording ) {
+//- (IBAction)toggleMovieRecording:(UIButton *)sender
+//{
+//    //    AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+//    //    AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:_videoDevice previewLayer:previewLayer];
+//    //    previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+//    if ( ! self.movieFileOutput.isRecording ) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [sender setAlpha:.15];
+//        });
+//        
+//        dispatch_async( self.sessionQueue, ^{
+//            if ( [UIDevice currentDevice].isMultitaskingSupported ) {
+//                self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+//            }
+//            //            AVCaptureConnection *movieConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+//            //            AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:previewLayer];
+//            //            previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+//            //            self.videoCaptureConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
+//            //            movieConnection.videoOrientation = previewLayerVideoOrientation;
+//            
+//            NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
+//            NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
+//            [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
+//            
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                UIApplication.sharedApplication.idleTimerDisabled = TRUE;
+//                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
+//                //                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
+//            });
+//        });
+//    }
+//    else {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [sender setAlpha:1.0];
+//            [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bolt.slash"] forState:UIControlStateSelected];
+//            
+//        });
+//        dispatch_async( self.sessionQueue, ^{
+//            [self.movieFileOutput stopRecording];
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                UIApplication.sharedApplication.idleTimerDisabled = FALSE;
+//                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
+//                //                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
+//            });
+//        });
+//    }
+//}
+
+- (IBAction)toggleMovieRecording:(UIButton *)sender {
+    if (!self.session.isRunning) {
+        NSLog(@"Session is not running. Cannot start recording.");
+        return;
+    }
+    
+    if (!self.movieFileOutput.isRecording) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [sender setAlpha:.15];
+            [sender setAlpha:0.5];
         });
         
-        dispatch_async( self.sessionQueue, ^{
-            if ( [UIDevice currentDevice].isMultitaskingSupported ) {
+        dispatch_async(self.sessionQueue, ^{
+            if ([UIDevice currentDevice].isMultitaskingSupported) {
                 self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
             }
-            //            AVCaptureConnection *movieConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-            //            AVCaptureDeviceRotationCoordinator * rotation_coord = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self->_videoDevice previewLayer:previewLayer];
-            //            previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
-            //            self.videoCaptureConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
-            //            movieConnection.videoOrientation = previewLayerVideoOrientation;
             
             NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
             NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                UIApplication.sharedApplication.idleTimerDisabled = TRUE;
-                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
-                //                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
-            });
         });
-    }
-    else {
+    } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             [sender setAlpha:1.0];
-            [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bolt.slash"] forState:UIControlStateSelected];
-            
         });
-        dispatch_async( self.sessionQueue, ^{
+        
+        dispatch_async(self.sessionQueue, ^{
             [self.movieFileOutput stopRecording];
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                UIApplication.sharedApplication.idleTimerDisabled = FALSE;
-                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
-                //                self->_fpsLabel.text = [NSString stringWithFormat:@"%@", fps];
-            });
         });
     }
 }
