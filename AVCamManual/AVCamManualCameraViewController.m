@@ -823,16 +823,20 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     
 }
 - (IBAction)unlockLensPositionConfiguration:(UISlider *)sender {
-    [self.videoDevice unlockForConfiguration];
+    dispatch_async(self.sessionQueue, ^{
+        [self.videoDevice unlockForConfiguration];
+    });
 }
 
 - (IBAction)lockLensPositionConfiguration:(UISlider *)sender {
-    __autoreleasing NSError *error = nil;
-    if ([self.videoDevice lockForConfiguration:&error]) {
-        
-    } else {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
             NSLog( @"Could not lock device for configuration: %@", error );
-    }
+        }
+    });
 }
 
 - (IBAction)magnifyLensPositionSlider:(UISlider *)sender forEvent:(UIEvent *)event {
@@ -848,22 +852,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeLensPosition:(UISlider *)sender
 {
+    float value = sender.value;
     dispatch_async( self.sessionQueue, ^{
-        __autoreleasing NSError *error = nil;
-        
-//        if ( [self.videoDevice lockForConfiguration:&error] ) {
-            dispatch_async( dispatch_get_main_queue(), ^{
-                [self.videoDevice setFocusModeLockedWithLensPosition:sender.value completionHandler:^(CMTime syncTime) {
-                    
-//                    [self.videoDevice unlockForConfiguration];
-                }];
-            });
-//        }
-//        else {
-//            NSLog( @"Could not lock device for configuration: %@", error );
-//        }
+        [self.videoDevice setFocusModeLockedWithLensPosition:value completionHandler:nil];
     });
 }
+
 - (IBAction)restoreLensSlider:(UISlider *)sender forEvent:(UIEvent *)event {
     [self restoreLensSlider_:sender forEvent:event];
 }
