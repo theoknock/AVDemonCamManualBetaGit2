@@ -967,22 +967,20 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 }
 
 - (IBAction)changeTorchLevel:(UISlider *)sender {
-//    @try {
-        __autoreleasing NSError *error;
-//        if ([_videoDevice lockForConfiguration:&error] && ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious)) {
+    __autoreleasing NSError *error;
     if ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious) {
-            if (sender.value != 0)
-                [self->_videoDevice setTorchModeOnWithLevel:sender.value error:&error];
-            else
-                [self->_videoDevice setTorchMode:AVCaptureTorchModeOff];
-        } else {
-            NSLog(@"Unable to adjust torch level; thermal state: %lu", [[NSProcessInfo processInfo] thermalState]);
-        }
-//    } @catch (NSException *exception) {
-//        NSLog(@"AVCaptureDevice lockForConfiguration returned error\t%@", exception);
-//    } @finally {
-//        [_videoDevice unlockForConfiguration];
-//    }
+        if (sender.value != 0)
+            [self->_videoDevice setTorchModeOnWithLevel:sender.value error:&error];
+        else
+            [self->_videoDevice setTorchMode:AVCaptureTorchModeOff];
+    } else {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning"
+                                                                       message:[NSString stringWithFormat:@"Unable to adjust torch level; thermal state: %lu", (unsigned long)[[NSProcessInfo processInfo] thermalState]]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
 }
 
 - (IBAction)lockTorchLevelConfiguration:(UISlider *)sender {
