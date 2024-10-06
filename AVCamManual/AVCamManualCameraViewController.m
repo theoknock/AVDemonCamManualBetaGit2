@@ -191,7 +191,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     [self.recordButton setImage:[UIImage systemImageNamed:@"stop.circle"] forState:UIControlStateSelected];
     [self.recordButton setImage:[UIImage systemImageNamed:@"record.circle"] forState:UIControlStateNormal];
     
-     
+    
     NSArray<NSString *> *deviceTypes = @[AVCaptureDeviceTypeBuiltInWideAngleCamera];
     self.videoDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
     
@@ -255,7 +255,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                     // set device output here (below)
                 } [self.session commitConfiguration];
             });
-                
+            
             ({ [self.videoCaptureConnection = [self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init] connectionWithMediaType:AVMediaTypeVideo] setPreferredVideoStabilizationMode:AVCaptureVideoStabilizationModeAuto];
                 if ( [self.session canAddOutput:self.movieFileOutput] ) {
                     ({
@@ -266,44 +266,42 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                         
                         dispatch_async( self.sessionQueue, ^{
                             [self configureCameraForHighestFrameRate:self.videoDevice];
-                        } );
-                        
-                        
-                    });
-                    
-                    [self.session commitConfiguration];
-                    self.previewView.session = self.session;
-                    
-                    dispatch_async( dispatch_get_main_queue(), ^{
-                        UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-                        if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
-                            self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
-                            ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
-                        }
-                        self.recordButton.enabled = YES;
-                        self.HUDButton.enabled = YES;
+                        });
                     });
                 }
-                
-                break;
-            }
-        case AVAuthorizationStatusNotDetermined:
-            {
-                dispatch_suspend( self.sessionQueue );
-                [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
-                    if ( ! granted ) {
-                        self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
-                    }
-                    dispatch_resume( self.sessionQueue );
-                }];
-                break;
-            }
-        default:
-            {
-                self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
-                break;
-            }
+            });
+            
+            [self.session commitConfiguration];
+            self.previewView.session = self.session;
+            
+            dispatch_async( dispatch_get_main_queue(), ^{
+                UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+                if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
+                    self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
+                    ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
+                }
+                self.recordButton.enabled = YES;
+                self.HUDButton.enabled = YES;
+            });
         }
+            
+        case AVAuthorizationStatusNotDetermined:
+        {
+            dispatch_suspend( self.sessionQueue );
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
+                if ( ! granted ) {
+                    self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
+                }
+                dispatch_resume( self.sessionQueue );
+            }];
+            break;
+        }
+        default:
+        {
+            self.setupResult = AVCamManualSetupResultCameraNotAuthorized;
+            break;
+        }
+            break;
     }
 }
 
