@@ -1573,15 +1573,50 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (void)sessionWasInterrupted:(NSNotification *)notification
 {
     AVCaptureSessionInterruptionReason reason = [notification.userInfo[AVCaptureSessionInterruptionReasonKey] integerValue];
+    NSString *message;
+    
+    switch (reason) {
+        case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground:
+            message = @"The session was interrupted because the app was sent to the background while using the camera.";
+            break;
+            
+        case AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient:
+            message = @"The session was interrupted because the audio device is being used by another client (e.g., a phone call or alarm).";
+            break;
+            
+        case AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient:
+            message = @"The session was interrupted because the video device is being used by another application or session.";
+            break;
+            
+        case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps:
+            message = @"The session was interrupted because the camera is not available when your app is running alongside another app (e.g., Slide Over, Split View, or Picture in Picture on iPad).";
+            break;
+            
+        case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableDueToSystemPressure:
+            message = @"The session was interrupted due to system pressure, such as thermal overload. Please reduce system load or cool the device.";
+            break;
+            
+        default:
+            message = @"The session was interrupted for an unknown reason.";
+            break;
+    }
+    
+    NSLog(@"Capture session was interrupted with reason: %ld", (long)reason);
+    
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Session Interrupted"
-                                                                   message:[NSString stringWithFormat:@"Capture session was interrupted with reason %ld", (long)reason]
+                                                                   message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
     [alert addAction:okAction];
     [self presentViewController:alert animated:YES completion:nil];
-    
-    if ( reason == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient ||
-        reason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
+    [self asdf:reason];
+}
+
+- (void)asdf:(AVCaptureSessionInterruptionReason)interruptionReason
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ( interruptionReason == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient ||
+        interruptionReason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
         // Simply fade-in a button to enable the user to try to resume the session running
         self.resumeButton.hidden = NO;
         self.resumeButton.alpha = 0.0;
@@ -1589,7 +1624,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             self.resumeButton.alpha = 1.0;
         }];
     }
-    else if ( reason == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps ) {
+    else if ( interruptionReason == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps ) {
         // Simply fade-in a label to inform the user that the camera is unavailable
         self.cameraUnavailableImageView.hidden = NO;
         self.cameraUnavailableImageView.alpha = 0.0;
@@ -1597,6 +1632,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             self.cameraUnavailableImageView.alpha = 1.0;
         }];
     }
+    });
 }
 
 - (void)sessionInterruptionEnded:(NSNotification *)notification
