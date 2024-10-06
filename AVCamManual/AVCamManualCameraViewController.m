@@ -321,7 +321,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                                                            position:AVCaptureDevicePositionBack];
     self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
     if (!self.videoDeviceInput) {
-        NSLog(@"Error creating video device input: %@", error.localizedDescription);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                       message:[NSString stringWithFormat:@"Error creating video device input: %@", error.localizedDescription]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
         self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
         [self.session commitConfiguration];
         return;
@@ -339,7 +344,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
     AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
     if (!audioDeviceInput) {
-        NSLog(@"Error creating audio device input: %@", error.localizedDescription);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                       message:[NSString stringWithFormat:@"Error creating audio device input: %@", error.localizedDescription]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
     } else if ([self.session canAddInput:audioDeviceInput]) {
         [self.session addInput:audioDeviceInput];
     } else {
@@ -639,12 +649,19 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
     self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
     
-    if ( ! self.videoDeviceInput ) {
-        NSLog( @"Could not create video device input: %@", error );
+    if (![self.session canAddInput:self.videoDeviceInput]) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                       message:@"Could not add video device input to the session"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        
         self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
         [self.session commitConfiguration];
         return;
     }
+    
     if ( [self.session canAddInput:self.videoDeviceInput] ) {
         [self.session addInput:self.videoDeviceInput];
         
@@ -1493,7 +1510,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (void)sessionWasInterrupted:(NSNotification *)notification
 {
     AVCaptureSessionInterruptionReason reason = [notification.userInfo[AVCaptureSessionInterruptionReasonKey] integerValue];
-    NSLog( @"Capture session was interrupted with reason %ld", (long)reason );
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Session Interrupted"
+                                                                   message:[NSString stringWithFormat:@"Capture session was interrupted with reason %ld", (long)reason]
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
     
     if ( reason == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient ||
         reason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
