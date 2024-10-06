@@ -831,7 +831,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.videoDevice unlockForConfiguration];
     }
     else {
-        NSLog( @"Could not lock device for configuration: %@", error );
+        if (![self.videoDevice lockForConfiguration:&error]) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
     }
 }
 
@@ -856,7 +863,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ([self.videoDevice lockForConfiguration:&error]) {
             
         } else {
-            NSLog( @"Could not lock device for configuration: %@", error );
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
     });
 }
@@ -914,7 +928,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             [device unlockForConfiguration];
         }
         else {
-            NSLog( @"Could not lock device for configuration: %@", error );
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
     } );
 }
@@ -940,7 +961,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.videoDevice unlockForConfiguration];
     }
     else {
-        NSLog( @"Could not lock device for configuration: %@", error );
+        if (![self.videoDevice lockForConfiguration:&error]) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
     }
 }
 
@@ -952,7 +980,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ([self.videoDevice lockForConfiguration:&error]) {
             
         } else {
-            NSLog( @"Could not lock device for configuration: %@", error );
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
     });
 }
@@ -1006,7 +1041,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ([self.videoDevice lockForConfiguration:&error]) {
             
         } else {
-            NSLog( @"Could not lock device for configuration: %@", error );
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
     });
 }
@@ -1029,7 +1071,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.videoDevice unlockForConfiguration];
     }
     else {
-        NSLog( @"Could not lock device for configuration: %@", error );
+        if (![self.videoDevice lockForConfiguration:&error]) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
     }
 }
 
@@ -1071,7 +1120,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.videoDevice unlockForConfiguration];
     }
     else {
-        NSLog( @"Could not lock device for configuration: %@", error );
+        if (![self.videoDevice lockForConfiguration:&error]) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
     }
 }
 
@@ -1085,7 +1141,14 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.videoDevice unlockForConfiguration];
     }
     else {
-        NSLog( @"Could not lock device for configuration: %@", error );
+        if (![self.videoDevice lockForConfiguration:&error]) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
     }
 }
 
