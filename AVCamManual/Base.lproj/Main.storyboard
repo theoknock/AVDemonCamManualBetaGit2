@@ -189,7 +189,7 @@
                                                         </constraints>
                                                         <segments>
                                                             <segment title="">
-                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical" variableValue="0.20000000000000007">
                                                                     <hierarchicalColors>
                                                                         <color systemColor="systemYellowColor"/>
                                                                         <color systemColor="systemBlueColor"/>

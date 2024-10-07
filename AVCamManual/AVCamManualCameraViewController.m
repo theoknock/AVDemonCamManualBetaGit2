@@ -866,13 +866,17 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     
     dispatch_async(self.sessionQueue, ^{
         AVCaptureFocusMode mode = (AVCaptureFocusMode)[self.focusModes[index] intValue];
-        if ( [self.videoDevice isFocusModeSupported:mode] ) {
-            self.videoDevice.focusMode = mode;
+        if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
+            NSLog([NSString stringWithFormat:@"%@", @(self.videoDevice.focusMode)]);
+            [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+        } else if (self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus) {
+            [self.videoDevice setFocusModeLockedWithLensPosition:index completionHandler:nil];
         }
-        else {
-            NSLog( @"Focus mode %@ is not supported. Focus mode is %@.", [self stringFromFocusMode:mode], [self stringFromFocusMode:self.videoDevice.focusMode] );
-            self.focusModeControl.selectedSegmentIndex = [self.focusModes indexOfObject:@(self.videoDevice.focusMode)];
-        }
+//        }
+//        else {
+//            NSLog( @"Focus mode %@ is not supported. Focus mode is %@.", [self stringFromFocusMode:mode], [self stringFromFocusMode:self.videoDevice.focusMode] );
+//            self.focusModeControl.selectedSegmentIndex = [self.focusModes indexOfObject:@(self.videoDevice.focusMode)];
+//        }
     });
     
     [self unlockFocusModeConfiguration:sender];
@@ -895,15 +899,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ([self.videoDevice lockForConfiguration:&error]) {
             // Empty block—no action taken when the lock is successful.
         } else {
-            if (![self.videoDevice lockForConfiguration:&error]) {
-                // This second attempt is unnecessary.
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
                                                                                message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
                                                                         preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
                 [alert addAction:okAction];
                 [self presentViewController:alert animated:YES completion:nil];
-            }
         }
     });
 }
