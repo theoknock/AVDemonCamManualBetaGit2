@@ -380,6 +380,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 [self.videoDevice setFocusMode:AVCaptureFocusModeLocked];
                 [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
                 [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+                if ([self->_videoDevice isTorchActive])
+                    [self->_videoDevice setTorchMode:0];
+                else
+                    [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
             } else {
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Could not add video device input to the session" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
@@ -425,7 +429,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self.session addOutput:self.movieFileOutput];
         self.videoCaptureConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
         self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeCinematicExtendedEnhanced;
-
+        
         // Insert your code here
         if ([self.movieFileOutput.availableVideoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
             [self.movieFileOutput setOutputSettings:@{ AVVideoCodecKey : AVVideoCodecTypeHEVC } forConnection:self.videoCaptureConnection];
@@ -451,6 +455,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.recordButton.enabled = YES;
                 self.HUDButton.enabled = YES;
+                [self configureManualHUD];
             });
         }
         
@@ -544,107 +549,105 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (void)configureManualHUD
 {
     self.focusModes = @[@(AVCaptureFocusModeContinuousAutoFocus), @(AVCaptureFocusModeLocked)];
+    NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        __autoreleasing NSError *error;
-        if ([self->_videoDevice lockForConfiguration:&error]) {
-            
-            if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
-                [self.focusModeControl setSelectedSegmentIndex:1];
-            } else if (self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus) {
-                [self.focusModeControl setSelectedSegmentIndex:0];
-            }
-            [self changeFocusMode:self.focusModeControl];
-            self.lensPositionSlider.minimumValue = 0.0;
-            self.lensPositionSlider.maximumValue = 1.0;
-            self.lensPositionSlider.value = self.videoDevice.lensPosition;
-            [self.lensPositionSlider setMinimumTrackTintColor:[UIColor systemYellowColor]];
-            [self.lensPositionSlider setMaximumTrackTintColor:[UIColor systemBlueColor]];
-            [self.lensPositionSlider setThumbTintColor:[UIColor whiteColor]];
-            rescale_lens_position = set_lens_position_scale(0.f, 1.f, 0.f, 1.f);
-            
-            self.rescaleLensPositionSliderValueRangeGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self.rescaleLensPositionSliderValueRangeGestureRecognizer action:@selector(rescaleLensPositionSliderRange:)];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setAllowableMovement:20];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setMinimumPressDuration:(NSTimeInterval)0.5];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setNumberOfTapsRequired:1];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setNumberOfTouchesRequired:1];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setDelaysTouchesBegan:FALSE];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setDelaysTouchesEnded:FALSE];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setCancelsTouchesInView:TRUE];
-            [self.rescaleLensPositionSliderValueRangeGestureRecognizer setRequiresExclusiveTouchType:FALSE];
-            [self.lensPositionSlider addGestureRecognizer:self.rescaleLensPositionSliderValueRangeGestureRecognizer];
-            
-            self.exposureModes = @[@(AVCaptureExposureModeContinuousAutoExposure), @(AVCaptureExposureModeCustom)];
-            self.exposureModeControl.enabled = ( self.videoDevice != nil );
-            [self.exposureModeControl setSelectedSegmentIndex:0];
-            for ( NSNumber *mode in self.exposureModes ) {
-                [self.exposureModeControl setEnabled:[self.videoDevice isExposureModeSupported:mode.intValue] forSegmentAtIndex:[self.exposureModes indexOfObject:mode]];
-            }
-            [self changeExposureMode:self.exposureModeControl];
-            
-            self.exposureDurationSlider.minimumValue = 0.f;
-            self.exposureDurationSlider.maximumValue = 1.f;
-            double exposureDurationSeconds = CMTimeGetSeconds( self.videoDevice.exposureDuration );
-            double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000.f*1000.f*1000.f));
-            double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000.f*1000.f*1000.f));
-            self.exposureDurationSlider.value = property_control_value(exposureDurationSeconds, minExposureDurationSeconds, maxExposureDurationSeconds, kExposureDurationPower, 0.f);
-            
-            self.exposureDurationSlider.enabled = ( self.videoDevice && self.videoDevice.exposureMode == AVCaptureExposureModeCustom);
-            
-            
-            self.ISOSlider.minimumValue = 0.f; //;
-            self.ISOSlider.maximumValue = 1.f; //self.videoDevice.activeFormat.maxISO;
-            self.ISOSlider.value = property_control_value(self.videoDevice.ISO, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f);
-            self.ISOSlider.enabled = ( self.videoDevice.exposureMode == AVCaptureExposureModeCustom );
-            
-            self.videoZoomFactorSlider.minimumValue = 0.0;
-            self.videoZoomFactorSlider.maximumValue = 1.0;
-            self.videoZoomFactorSlider.value = property_control_value(self.videoDevice.videoZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f);
-            self.videoZoomFactorSlider.enabled = YES;
-            
-            
-            
-            // To-Do: Restore these for "color-contrasting" overwhite/overblack subject areas (where luminosity contrasting fails)
-            
-            // Manual white balance controls
-            self.whiteBalanceModes = @[@(AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance), @(AVCaptureWhiteBalanceModeLocked)];
-            
-            self.whiteBalanceModeControl.enabled = (self.videoDevice != nil);
-            self.whiteBalanceModeControl.selectedSegmentIndex = [self.whiteBalanceModes indexOfObject:@(self.videoDevice.whiteBalanceMode)];
-            for ( NSNumber *mode in self.whiteBalanceModes ) {
-                [self.whiteBalanceModeControl setEnabled:[self.videoDevice isWhiteBalanceModeSupported:mode.intValue] forSegmentAtIndex:[self.whiteBalanceModes indexOfObject:mode]];
-            }
-            
-            AVCaptureWhiteBalanceGains whiteBalanceGains = self.videoDevice.deviceWhiteBalanceGains;
-            AVCaptureWhiteBalanceTemperatureAndTintValues whiteBalanceTemperatureAndTint = [self.videoDevice temperatureAndTintValuesForDeviceWhiteBalanceGains:whiteBalanceGains];
-            
-            //            temp (yellow/blue) and tint (magenta/green)
-            
-            [self.temperatureSlider setMaximumValueImage:[UIImage systemImageNamed:@"b.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor systemBlueColor]]]];
-            [self.temperatureSlider setMinimumValueImage:[UIImage systemImageNamed:@"y.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor systemYellowColor]]]];
-            self.temperatureSlider.minimumValue = 0.f;
-            self.temperatureSlider.maximumValue = 1.f;
-            self.temperatureSlider.value = property_control_value(whiteBalanceTemperatureAndTint.temperature, 3000.f, 8000.f, 1.f, 0.f);
-            self.temperatureSlider.enabled = ( self.videoDevice && self.videoDevice.whiteBalanceMode == AVCaptureWhiteBalanceModeLocked );
-            
-            [self.tintSlider setMinimumValueImage:[UIImage systemImageNamed:@"m.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.8470588235f green:0.06274509804f blue:0.4941176471f alpha:1.f]]]];
-            [self.tintSlider setMaximumValueImage:[UIImage systemImageNamed:@"g.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor systemGreenColor]]]];
-            
-            self.tintSlider.minimumValue = 0.f;
-            self.tintSlider.maximumValue = 1.f;
-            self.tintSlider.value = property_control_value(whiteBalanceTemperatureAndTint.tint, -150.f, 150.f, 1.f, 0.f);
-            self.tintSlider.enabled = ( self.videoDevice && self.videoDevice.whiteBalanceMode == AVCaptureWhiteBalanceModeLocked );
-            
-            if ([self->_videoDevice isTorchActive])
-                [self->_videoDevice setTorchMode:0];
-            //            else
-            //                [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
-        } else {
-            NSLog(@"AVCaptureDevice lockForConfiguration returned error\t%@", error);
+        self.lensPositionSlider.minimumValue = 0.0;
+        self.lensPositionSlider.maximumValue = 1.0;
+        self.lensPositionSlider.value = self.videoDevice.lensPosition;
+        [self.lensPositionSlider setMinimumTrackTintColor:[UIColor systemYellowColor]];
+        [self.lensPositionSlider setMaximumTrackTintColor:[UIColor systemBlueColor]];
+        [self.lensPositionSlider setThumbTintColor:[UIColor whiteColor]];
+        rescale_lens_position = set_lens_position_scale(0.f, 1.f, 0.f, 1.f);
+        
+        self.rescaleLensPositionSliderValueRangeGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self.rescaleLensPositionSliderValueRangeGestureRecognizer action:@selector(rescaleLensPositionSliderRange:)];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setAllowableMovement:20];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setMinimumPressDuration:(NSTimeInterval)0.5];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setNumberOfTapsRequired:1];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setNumberOfTouchesRequired:1];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setDelaysTouchesBegan:FALSE];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setDelaysTouchesEnded:FALSE];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setCancelsTouchesInView:TRUE];
+        [self.rescaleLensPositionSliderValueRangeGestureRecognizer setRequiresExclusiveTouchType:FALSE];
+        [self.lensPositionSlider addGestureRecognizer:self.rescaleLensPositionSliderValueRangeGestureRecognizer];
+        
+        self.exposureModes = @[@(AVCaptureExposureModeContinuousAutoExposure), @(AVCaptureExposureModeCustom)];
+        self.exposureModeControl.enabled = ( self.videoDevice != nil );
+        [self.exposureModeControl setSelectedSegmentIndex:0];
+        for ( NSNumber *mode in self.exposureModes ) {
+            [self.exposureModeControl setEnabled:[self.videoDevice isExposureModeSupported:mode.intValue] forSegmentAtIndex:[self.exposureModes indexOfObject:mode]];
         }
-        [self->_videoDevice unlockForConfiguration];
+        //        [self changeExposureMode:self.exposureModeControl.];
+        
+        self.exposureDurationSlider.minimumValue = 0.f;
+        self.exposureDurationSlider.maximumValue = 1.f;
+        double exposureDurationSeconds = CMTimeGetSeconds( self.videoDevice.exposureDuration );
+        double minExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 1000.f), 1000.f*1000.f*1000.f));
+        double maxExposureDurationSeconds = CMTimeGetSeconds(CMTimeMakeWithSeconds((1.f / 3.f), 1000.f*1000.f*1000.f));
+        self.exposureDurationSlider.value = property_control_value(exposureDurationSeconds, minExposureDurationSeconds, maxExposureDurationSeconds, kExposureDurationPower, 0.f);
+        
+        self.exposureDurationSlider.enabled = ( self.videoDevice && self.videoDevice.exposureMode == AVCaptureExposureModeCustom);
+        
+        
+        self.ISOSlider.minimumValue = 0.f; //;
+        self.ISOSlider.maximumValue = 1.f; //self.videoDevice.activeFormat.maxISO;
+        self.ISOSlider.value = property_control_value(self.videoDevice.ISO, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f);
+        self.ISOSlider.enabled = ( self.videoDevice.exposureMode == AVCaptureExposureModeCustom );
+        
+        self.videoZoomFactorSlider.minimumValue = 0.0;
+        self.videoZoomFactorSlider.maximumValue = 1.0;
+        self.videoZoomFactorSlider.value = property_control_value(self.videoDevice.videoZoomFactor, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f);
+        self.videoZoomFactorSlider.enabled = YES;
+        
+        
+        
+        // To-Do: Restore these for "color-contrasting" overwhite/overblack subject areas (where luminosity contrasting fails)
+        
+        // Manual white balance controls
+        self.whiteBalanceModes = @[@(AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance), @(AVCaptureWhiteBalanceModeLocked)];
+        self.whiteBalanceModeControl.enabled = (self.videoDevice != nil);
+        self.whiteBalanceModeControl.selectedSegmentIndex = [self.whiteBalanceModes indexOfObject:@(self.videoDevice.whiteBalanceMode)];
+        for ( NSNumber *mode in self.whiteBalanceModes ) {
+            [self.whiteBalanceModeControl setEnabled:[self.videoDevice isWhiteBalanceModeSupported:mode.intValue] forSegmentAtIndex:[self.whiteBalanceModes indexOfObject:mode]];
+        }
+        AVCaptureWhiteBalanceGains whiteBalanceGains = self.videoDevice.deviceWhiteBalanceGains;
+        AVCaptureWhiteBalanceTemperatureAndTintValues whiteBalanceTemperatureAndTint = [self.videoDevice temperatureAndTintValuesForDeviceWhiteBalanceGains:whiteBalanceGains];
+        
+        //            temp (yellow/blue) and tint (magenta/green)
+        [self.temperatureSlider setMaximumValueImage:[UIImage systemImageNamed:@"b.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor systemBlueColor]]]];
+        [self.temperatureSlider setMinimumValueImage:[UIImage systemImageNamed:@"y.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor systemYellowColor]]]];
+        self.temperatureSlider.minimumValue = 0.f;
+        self.temperatureSlider.maximumValue = 1.f;
+        self.temperatureSlider.value = property_control_value(whiteBalanceTemperatureAndTint.temperature, 3000.f, 8000.f, 1.f, 0.f);
+        self.temperatureSlider.enabled = ( self.videoDevice && self.videoDevice.whiteBalanceMode == AVCaptureWhiteBalanceModeLocked );
+        
+        [self.tintSlider setMinimumValueImage:[UIImage systemImageNamed:@"m.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.8470588235f green:0.06274509804f blue:0.4941176471f alpha:1.f]]]];
+        [self.tintSlider setMaximumValueImage:[UIImage systemImageNamed:@"g.circle" withConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor systemGreenColor]]]];
+        
+        self.tintSlider.minimumValue = 0.f;
+        self.tintSlider.maximumValue = 1.f;
+        self.tintSlider.value = property_control_value(whiteBalanceTemperatureAndTint.tint, -150.f, 150.f, 1.f, 0.f);
+        self.tintSlider.enabled = ( self.videoDevice && self.videoDevice.whiteBalanceMode == AVCaptureWhiteBalanceModeLocked );
     });
 }
+//        __autoreleasing NSError *error;
+//        if ([self->_videoDevice lockForConfiguration:&error]) {
+
+//            if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
+//                [self.focusModeControl setSelectedSegmentIndex:1];
+//            } else if (self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus) {
+//                [self.focusModeControl setSelectedSegmentIndex:0];
+//            }
+//
+
+
+
+//        } else {
+//            NSLog(@"AVCaptureDevice lockForConfiguration returned error\t%@", error);
+//        }
+//        [self->_videoDevice unlockForConfiguration];
+//    });
+//    }
 
 //- (IBAction)toggleTorch:(id)sender
 //{
@@ -710,18 +713,18 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //    if ( self.setupResult != AVCamManualSetupResultSuccess ) {
 //        return;
 //    }
-//    
+//
 //    __autoreleasing NSError *error = nil;
-//    
+//
 //    [self.session beginConfiguration];
-//    
+//
 //    self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
 //    [self.session setAutomaticallyConfiguresCaptureDeviceForWideColor:TRUE];
-//    
+//
 //    // Add video input
 //    self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
 //    self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
-//    
+//
 //    if (![self.session canAddInput:self.videoDeviceInput]) {
 //        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
 //                                                                       message:@"Could not add video device input to the session"
@@ -729,15 +732,15 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
 //        [alert addAction:okAction];
 //        [self presentViewController:alert animated:YES completion:nil];
-//        
+//
 //        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
 //        [self.session commitConfiguration];
 //        return;
 //    }
-//    
+//
 //    if ( [self.session canAddInput:self.videoDeviceInput] ) {
 //        [self.session addInput:self.videoDeviceInput];
-//        
+//
 //        // Configure default camera focus and exposure properties (set to manual vs. auto)
 //        __autoreleasing NSError *error;
 //        [self.videoDevice lockForConfiguration:&error];
@@ -750,7 +753,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //        } @finally {
 //            [self.videoDevice unlockForConfiguration];
 //        }
-//        
+//
 //        //  Enable low-light boost
 //        __autoreleasing NSError *automaticallyEnablesLowLightBoostWhenAvailableError;
 //        [self.videoDevice lockForConfiguration:&automaticallyEnablesLowLightBoostWhenAvailableError];
@@ -761,9 +764,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //        } @finally {
 //            [self.videoDevice unlockForConfiguration];
 //        }
-//        
+//
 //        [self configureCameraForHighestFrameRate:self.videoDevice];
-//        
+//
 //        dispatch_async( dispatch_get_main_queue(), ^{
 //            UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
 //            if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
@@ -771,10 +774,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //                ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
 //            }
 //        } );
-//        
-//        
-//        
-//        
+//
+//
+//
+//
 //    }
 //    else {
 //        NSLog( @"Could not add video device input to the session" );
@@ -782,7 +785,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //        [self.session commitConfiguration];
 //        return;
 //    }
-//    
+//
 //    // Add audio input
 //    AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
 //    AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
@@ -795,13 +798,13 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //    else {
 //        NSLog( @"Could not add audio device input to the session" );
 //    }
-//    
-//    
+//
+//
 //    // We will not create an AVCaptureMovieFileOutput when configuring the session because the AVCaptureMovieFileOutput does not support movie recording with AVCaptureSessionPresetPhoto
 //    self.backgroundRecordingID = UIBackgroundTaskInvalid;
-//    
+//
 //    [self.session commitConfiguration];
-//    
+//
 //    dispatch_async( dispatch_get_main_queue(), ^{
 //        [self configureManualHUD];
 //    } );
@@ -886,8 +889,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //    } );
 //}
 
-- (IBAction)lockFocusModeConfiguration:(UISegmentedControl *)sender {
+- (void)lockFocusModeConfiguration {
     NSLog(@"lockFocusModeConfiguration");
+    NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
     dispatch_async(self.sessionQueue, ^{
         __autoreleasing NSError *error = nil;
         if ([self.videoDevice lockForConfiguration:&error]) {
@@ -909,30 +913,35 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeFocusMode:(UISegmentedControl *)sender
 {
-    NSLog(@"changeFocusMode");
-    NSInteger index = sender.selectedSegmentIndex;
-    
-    [self lockFocusModeConfiguration:sender];
-    
+    NSInteger position = self.lensPositionSlider.value;
     dispatch_async(self.sessionQueue, ^{
-//        AVCaptureFocusMode mode = (AVCaptureFocusMode)[self.focusModes[index] intValue];
-        if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
-            NSLog([NSString stringWithFormat:@"%@", @(self.videoDevice.focusMode)]);
+        NSLog(@"changeFocusMode");
+        NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
+        [self lockFocusModeConfiguration];
+        
+        AVCaptureFocusMode mode = (AVCaptureFocusMode)self.videoDevice.focusMode;
+        if (mode == AVCaptureFocusModeLocked) {
             [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
-        } else if (self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus) {
-            [self.videoDevice setFocusModeLockedWithLensPosition:index completionHandler:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [sender setSelectedSegmentIndex:0];
+            });
+        } else if (mode == AVCaptureFocusModeContinuousAutoFocus) {
+            [self.videoDevice setFocusModeLockedWithLensPosition:position completionHandler:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [sender setSelectedSegmentIndex:1];
+            });
         }
-//        }
-//        else {
-//            NSLog( @"Focus mode %@ is not supported. Focus mode is %@.", [self stringFromFocusMode:mode], [self stringFromFocusMode:self.videoDevice.focusMode] );
-//            self.focusModeControl.selectedSegmentIndex = [self.focusModes indexOfObject:@(self.videoDevice.focusMode)];
-//        }
+        NSLog(@"NEW self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
+        //        }
+        //        else {
+        //            NSLog( @"Focus mode %@ is not supported. Focus mode is %@.", [self stringFromFocusMode:mode], [self stringFromFocusMode:self.videoDevice.focusMode] );
+        //            self.focusModeControl.selectedSegmentIndex = [self.focusModes indexOfObject:@(self.videoDevice.focusMode)];
+        //        }
+        [self unlockFocusModeConfiguration];
     });
-    
-    [self unlockFocusModeConfiguration:sender];
 }
 
-- (IBAction)unlockFocusModeConfiguration:(UISegmentedControl *)sender {
+- (void)unlockFocusModeConfiguration {
     NSLog(@"unlockFocusModeConfiguration");
     
     dispatch_async(self.sessionQueue, ^{
@@ -949,12 +958,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ([self.videoDevice lockForConfiguration:&error]) {
             // Empty block—no action taken when the lock is successful.
         } else {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-                [alert addAction:okAction];
-                [self presentViewController:alert animated:YES completion:nil];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     });
 }
@@ -1322,7 +1331,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //        dispatch_async(dispatch_get_main_queue(), ^{
 //            [sender setAlpha:.15];
 //        });
-//        
+//
 //        dispatch_async( self.sessionQueue, ^{
 //            if ( [UIDevice currentDevice].isMultitaskingSupported ) {
 //                self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
@@ -1332,11 +1341,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //            //            previewLayer.connection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
 //            //            self.videoCaptureConnection.videoRotationAngle = rotation_coord.videoRotationAngleForHorizonLevelPreview;
 //            //            movieConnection.videoOrientation = previewLayerVideoOrientation;
-//            
+//
 //            NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
 //            NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
 //            [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
-//            
+//
 //            dispatch_sync(dispatch_get_main_queue(), ^{
 //                UIApplication.sharedApplication.idleTimerDisabled = TRUE;
 //                //                NSString * fps = (NSString *)CFBridgingRelease(CMTimeCopyDescription(NULL, self->_videoDevice.activeVideoMaxFrameDuration));
@@ -1348,7 +1357,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //        dispatch_async(dispatch_get_main_queue(), ^{
 //            [sender setAlpha:1.0];
 //            [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bolt.slash"] forState:UIControlStateSelected];
-//            
+//
 //        });
 //        dispatch_async( self.sessionQueue, ^{
 //            [self.movieFileOutput stopRecording];
@@ -1735,22 +1744,22 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         if ( interruptionReason == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient ||
-        interruptionReason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
-        // Simply fade-in a button to enable the user to try to resume the session running
-        self.resumeButton.hidden = NO;
-        self.resumeButton.alpha = 0.0;
-        [UIView animateWithDuration:0.25 animations:^{
-            self.resumeButton.alpha = 1.0;
-        }];
-    }
-    else if ( interruptionReason == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps ) {
-        // Simply fade-in a label to inform the user that the camera is unavailable
-        self.cameraUnavailableImageView.hidden = NO;
-        self.cameraUnavailableImageView.alpha = 0.0;
-        [UIView animateWithDuration:0.25 animations:^{
-            self.cameraUnavailableImageView.alpha = 1.0;
-        }];
-    }
+            interruptionReason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
+            // Simply fade-in a button to enable the user to try to resume the session running
+            self.resumeButton.hidden = NO;
+            self.resumeButton.alpha = 0.0;
+            [UIView animateWithDuration:0.25 animations:^{
+                self.resumeButton.alpha = 1.0;
+            }];
+        }
+        else if ( interruptionReason == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps ) {
+            // Simply fade-in a label to inform the user that the camera is unavailable
+            self.cameraUnavailableImageView.hidden = NO;
+            self.cameraUnavailableImageView.alpha = 0.0;
+            [UIView animateWithDuration:0.25 animations:^{
+                self.cameraUnavailableImageView.alpha = 1.0;
+            }];
+        }
     });
 }
 
