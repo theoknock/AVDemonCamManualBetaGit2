@@ -372,6 +372,49 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         [self presentViewController:alert animated:YES completion:nil];
     } else if ([self.session canAddInput:audioDeviceInput]) {
         [self.session addInput:audioDeviceInput];
+        
+        // Configure default camera focus and exposure properties (set to manual vs. auto)
+        __autoreleasing NSError *error;
+        @try {
+            if ([self.videoDevice lockForConfiguration:&error]) {
+                [self.videoDevice setFocusMode:AVCaptureFocusModeLocked];
+                [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
+                [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+            } else {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Could not add video device input to the session" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+                return;
+            }
+        } @catch (NSException *exception) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Could not lock video device for configuration" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+            return;
+        } @finally {
+            __autoreleasing NSError *automaticallyEnablesLowLightBoostWhenAvailableError;
+            [self.videoDevice lockForConfiguration:&automaticallyEnablesLowLightBoostWhenAvailableError];
+            @try {
+                [self.videoDevice setAutomaticallyEnablesLowLightBoostWhenAvailable:TRUE];
+            } @catch (NSException *exception) {
+                NSLog(@"Error enabling automatic low light boost: %@", automaticallyEnablesLowLightBoostWhenAvailableError.description);
+            } @finally {
+                [self.videoDevice unlockForConfiguration];
+            }
+        }
+        
+        [self configureCameraForHighestFrameRate:self.videoDevice];
+        
+        dispatch_async( dispatch_get_main_queue(), ^{
+            UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+            if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
+                self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
+                ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
+            }
+        } );
+        
     } else {
         NSLog(@"Could not add audio device input to the session");
     }
@@ -447,7 +490,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
             {
                 dispatch_async( dispatch_get_main_queue(), ^{
                     NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCamManual" message:message preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVDemonCamManual" message:message preferredStyle:UIAlertControllerStyleAlert];
                     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
                     [alertController addAction:cancelAction];
                     [self presentViewController:alertController animated:YES completion:nil];
@@ -503,7 +546,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     dispatch_async(dispatch_get_main_queue(), ^{
         __autoreleasing NSError *error;
         if ([self->_videoDevice lockForConfiguration:&error]) {
-            [self.focusModeControl setSelectedSegmentIndex:0];
+            
+            if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
+                [self.focusModeControl setSelectedSegmentIndex:1];
+            } else if (self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus) {
+                [self.focusModeControl setSelectedSegmentIndex:0];
+            }
             [self changeFocusMode:self.focusModeControl];
             self.lensPositionSlider.minimumValue = 0.0;
             self.lensPositionSlider.maximumValue = 1.0;
@@ -655,107 +703,107 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 #pragma mark Session Management
 
-- (void)configureSession
-{
-    if ( self.setupResult != AVCamManualSetupResultSuccess ) {
-        return;
-    }
-    
-    __autoreleasing NSError *error = nil;
-    
-    [self.session beginConfiguration];
-    
-    self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
-    [self.session setAutomaticallyConfiguresCaptureDeviceForWideColor:TRUE];
-    
-    // Add video input
-    self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-    self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
-    
-    if (![self.session canAddInput:self.videoDeviceInput]) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                       message:@"Could not add video device input to the session"
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:okAction];
-        [self presentViewController:alert animated:YES completion:nil];
-        
-        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
-        [self.session commitConfiguration];
-        return;
-    }
-    
-    if ( [self.session canAddInput:self.videoDeviceInput] ) {
-        [self.session addInput:self.videoDeviceInput];
-        
-        // Configure default camera focus and exposure properties (set to manual vs. auto)
-        __autoreleasing NSError *error;
-        [self.videoDevice lockForConfiguration:&error];
-        @try {
-            [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
-            [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
-            [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
-        } @catch (NSException *exception) {
-            NSLog(@"Error setting focus mode: %@", error.description);
-        } @finally {
-            [self.videoDevice unlockForConfiguration];
-        }
-        
-        //  Enable low-light boost
-        __autoreleasing NSError *automaticallyEnablesLowLightBoostWhenAvailableError;
-        [self.videoDevice lockForConfiguration:&automaticallyEnablesLowLightBoostWhenAvailableError];
-        @try {
-            [self.videoDevice setAutomaticallyEnablesLowLightBoostWhenAvailable:TRUE];
-        } @catch (NSException *exception) {
-            NSLog(@"Error enabling automatic low light boost: %@", automaticallyEnablesLowLightBoostWhenAvailableError.description);
-        } @finally {
-            [self.videoDevice unlockForConfiguration];
-        }
-        
-        [self configureCameraForHighestFrameRate:self.videoDevice];
-        
-        dispatch_async( dispatch_get_main_queue(), ^{
-            UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-            if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
-                self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
-                ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
-            }
-        } );
-        
-        
-        
-        
-    }
-    else {
-        NSLog( @"Could not add video device input to the session" );
-        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
-        [self.session commitConfiguration];
-        return;
-    }
-    
-    // Add audio input
-    AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-    AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
-    if ( ! audioDeviceInput ) {
-        NSLog( @"Could not create audio device input: %@", error );
-    }
-    if ( [self.session canAddInput:audioDeviceInput] ) {
-        [self.session addInput:audioDeviceInput];
-    }
-    else {
-        NSLog( @"Could not add audio device input to the session" );
-    }
-    
-    
-    // We will not create an AVCaptureMovieFileOutput when configuring the session because the AVCaptureMovieFileOutput does not support movie recording with AVCaptureSessionPresetPhoto
-    self.backgroundRecordingID = UIBackgroundTaskInvalid;
-    
-    [self.session commitConfiguration];
-    
-    dispatch_async( dispatch_get_main_queue(), ^{
-        [self configureManualHUD];
-    } );
-}
+//- (void)configureSession
+//{
+//    if ( self.setupResult != AVCamManualSetupResultSuccess ) {
+//        return;
+//    }
+//    
+//    __autoreleasing NSError *error = nil;
+//    
+//    [self.session beginConfiguration];
+//    
+//    self.session.sessionPreset = AVCaptureSessionPreset3840x2160;
+//    [self.session setAutomaticallyConfiguresCaptureDeviceForWideColor:TRUE];
+//    
+//    // Add video input
+//    self.videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+//    self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoDevice error:&error];
+//    
+//    if (![self.session canAddInput:self.videoDeviceInput]) {
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+//                                                                       message:@"Could not add video device input to the session"
+//                                                                preferredStyle:UIAlertControllerStyleAlert];
+//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+//        [alert addAction:okAction];
+//        [self presentViewController:alert animated:YES completion:nil];
+//        
+//        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
+//        [self.session commitConfiguration];
+//        return;
+//    }
+//    
+//    if ( [self.session canAddInput:self.videoDeviceInput] ) {
+//        [self.session addInput:self.videoDeviceInput];
+//        
+//        // Configure default camera focus and exposure properties (set to manual vs. auto)
+//        __autoreleasing NSError *error;
+//        [self.videoDevice lockForConfiguration:&error];
+//        @try {
+//            [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+//            [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
+//            [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+//        } @catch (NSException *exception) {
+//            NSLog(@"Error setting focus mode: %@", error.description);
+//        } @finally {
+//            [self.videoDevice unlockForConfiguration];
+//        }
+//        
+//        //  Enable low-light boost
+//        __autoreleasing NSError *automaticallyEnablesLowLightBoostWhenAvailableError;
+//        [self.videoDevice lockForConfiguration:&automaticallyEnablesLowLightBoostWhenAvailableError];
+//        @try {
+//            [self.videoDevice setAutomaticallyEnablesLowLightBoostWhenAvailable:TRUE];
+//        } @catch (NSException *exception) {
+//            NSLog(@"Error enabling automatic low light boost: %@", automaticallyEnablesLowLightBoostWhenAvailableError.description);
+//        } @finally {
+//            [self.videoDevice unlockForConfiguration];
+//        }
+//        
+//        [self configureCameraForHighestFrameRate:self.videoDevice];
+//        
+//        dispatch_async( dispatch_get_main_queue(), ^{
+//            UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+//            if ( UIDeviceOrientationIsPortrait( deviceOrientation ) || UIDeviceOrientationIsLandscape( deviceOrientation ) ) {
+//                self.videoDeviceRotationCoordinator = [[AVCaptureDeviceRotationCoordinator alloc] initWithDevice:self.videoDevice previewLayer:(AVCaptureVideoPreviewLayer *)self.previewView.layer];
+//                ((AVCaptureVideoPreviewLayer *)self.previewView.layer).connection.videoRotationAngle = self.videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview;
+//            }
+//        } );
+//        
+//        
+//        
+//        
+//    }
+//    else {
+//        NSLog( @"Could not add video device input to the session" );
+//        self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
+//        [self.session commitConfiguration];
+//        return;
+//    }
+//    
+//    // Add audio input
+//    AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+//    AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
+//    if ( ! audioDeviceInput ) {
+//        NSLog( @"Could not create audio device input: %@", error );
+//    }
+//    if ( [self.session canAddInput:audioDeviceInput] ) {
+//        [self.session addInput:audioDeviceInput];
+//    }
+//    else {
+//        NSLog( @"Could not add audio device input to the session" );
+//    }
+//    
+//    
+//    // We will not create an AVCaptureMovieFileOutput when configuring the session because the AVCaptureMovieFileOutput does not support movie recording with AVCaptureSessionPresetPhoto
+//    self.backgroundRecordingID = UIBackgroundTaskInvalid;
+//    
+//    [self.session commitConfiguration];
+//    
+//    dispatch_async( dispatch_get_main_queue(), ^{
+//        [self configureManualHUD];
+//    } );
+//}
 
 - (IBAction)resumeInterruptedSession:(id)sender
 {
@@ -865,7 +913,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     [self lockFocusModeConfiguration:sender];
     
     dispatch_async(self.sessionQueue, ^{
-        AVCaptureFocusMode mode = (AVCaptureFocusMode)[self.focusModes[index] intValue];
+//        AVCaptureFocusMode mode = (AVCaptureFocusMode)[self.focusModes[index] intValue];
         if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
             NSLog([NSString stringWithFormat:@"%@", @(self.videoDevice.focusMode)]);
             [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
@@ -1129,25 +1177,44 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 }
 
 
-- (IBAction)changeVideoZoomFactor:(UISlider *)sender {
-    if (![self.videoDevice isRampingVideoZoom] && (sender.value != self.videoDevice.videoZoomFactor)) {
-        @try {
-            ^{
-                NSError * e = nil;
-                ((([self.videoDevice lockForConfiguration:&e] && !e)
-                  && ^ unsigned long { [self.videoDevice setVideoZoomFactor:control_property_value(sender.value, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f)]; return 1UL; }())
-                 || ^ unsigned long { @throw [NSException exceptionWithName:e.domain reason:e.localizedFailureReason userInfo:@{@"Error Code" : @(e.code)}]; return 1UL; }());
-            }();
-        } @catch (NSException * exception) {
-            printf("Error configuring camera:\n\tDomain: %s\n\tLocalized failure reason: %s\n\tError code: %lu\n",
-                   [exception.name UTF8String],
-                   [exception.reason UTF8String],
-                   [[exception.userInfo valueForKey:@"Error Code"] unsignedIntegerValue]);
-        } @finally {
-            [self.videoDevice unlockForConfiguration];
+- (IBAction)lockVideoZoomFactorConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
-    }
+    });
 }
+
+
+- (IBAction)changeVideoZoomFactor:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        NSError *error = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            ^{
+                ((((![self.videoDevice isRampingVideoZoom] && (sender.value != self.videoDevice.videoZoomFactor)) && !error)
+                  && ^ unsigned long { [self.videoDevice setVideoZoomFactor:control_property_value(sender.value, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f)]; return 1UL; }())
+                 || ^ unsigned long { @throw [NSException exceptionWithName:error.domain reason:error.localizedFailureReason userInfo:@{@"Error Code" : @(error.code)}]; return 1UL; }());
+            }();
+        });
+    });
+}
+
+- (IBAction)unlockVideoZoomFactorConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        [self.videoDevice unlockForConfiguration];
+    });
+}
+
 
 - (IBAction)changeWhiteBalanceMode:(id)sender
 {
@@ -1442,7 +1509,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         if ( newValue && newValue != [NSNull null] ) {
             AVCaptureFocusMode newMode = [newValue intValue];
             dispatch_async( dispatch_get_main_queue(), ^{
-                self.focusModeControl.selectedSegmentIndex = [self.focusModes indexOfObject:@(newMode)];
+                if (self.videoDevice.focusMode == AVCaptureFocusModeLocked) {
+                    [self.focusModeControl setSelectedSegmentIndex:1];
+                } else if (self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus) {
+                    [self.focusModeControl setSelectedSegmentIndex:0];
+                }
                 self.lensPositionSlider.enabled = ( newMode == AVCaptureFocusModeLocked );
                 self.lensPositionSlider.selected = ( newMode == AVCaptureFocusModeLocked );
                 
