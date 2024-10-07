@@ -210,7 +210,7 @@
                                                         <color key="tintColor" red="0.99942404029999998" green="0.98555368190000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
                                                         <connections>
-                                                            <action selector="changeFocusMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="JyB-vH-3jA"/>
+                                                            <action selector="changeFocusMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="i1z-AV-oZa"/>
                                                         </connections>
                                                     </segmentedControl>
                                                 </subviews>
@@ -645,7 +645,6 @@
                         <outlet property="coverView" destination="vRU-a6-qp8" id="ZkZ-Rr-Xal"/>
                         <outlet property="exposureDurationSlider" destination="7R6-CN-WmZ" id="bsY-ft-Wyy"/>
                         <outlet property="exposureModeControl" destination="vvO-Ky-Czn" id="pqH-oy-Ju7"/>
-                        <outlet property="focusModeControl" destination="ktg-mg-Ejd" id="AWo-pJ-qt9"/>
                         <outlet property="grayWorldButton" destination="1XR-0K-p1z" id="rte-6V-uYi"/>
                         <outlet property="lensPositionSlider" destination="TV0-Z0-OUU" id="LvC-Bw-06A"/>
                         <outlet property="manualHUD" destination="amH-FF-rBy" id="5GY-L7-Ddm"/>
