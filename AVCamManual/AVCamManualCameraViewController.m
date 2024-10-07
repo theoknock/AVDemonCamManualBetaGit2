@@ -377,13 +377,13 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         __autoreleasing NSError *error;
         @try {
             if ([self.videoDevice lockForConfiguration:&error]) {
-                [self.videoDevice setFocusMode:AVCaptureFocusModeLocked];
+                [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
                 [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
                 [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
-                if ([self->_videoDevice isTorchActive])
+//                if ([self->_videoDevice isTorchActive])
                     [self->_videoDevice setTorchMode:0];
-                else
-                    [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
+//                else
+//                    [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
             } else {
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Could not add video device input to the session" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
@@ -552,6 +552,8 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.lensPositionSlider setEnabled:FALSE];
+        
         self.lensPositionSlider.minimumValue = 0.0;
         self.lensPositionSlider.maximumValue = 1.0;
         self.lensPositionSlider.value = self.videoDevice.lensPosition;
@@ -1117,9 +1119,21 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 #pragma mark Torch Level Configuration
 
-- (IBAction)unlockTorchLevelConfiguration:(UISlider *)sender {
+- (IBAction)lockTorchLevelConfiguration:(UISlider *)sender {
     dispatch_async(self.sessionQueue, ^{
-        [self.videoDevice unlockForConfiguration];
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
     });
 }
 
@@ -1140,21 +1154,9 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
 }
 
-- (IBAction)lockTorchLevelConfiguration:(UISlider *)sender {
+- (IBAction)unlockTorchLevelConfiguration:(UISlider *)sender {
     dispatch_async(self.sessionQueue, ^{
-        __autoreleasing NSError *error = nil;
-        if ([self.videoDevice lockForConfiguration:&error]) {
-            
-        } else {
-            if (![self.videoDevice lockForConfiguration:&error]) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-                [alert addAction:okAction];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-        }
+        [self.videoDevice unlockForConfiguration];
     });
 }
 
