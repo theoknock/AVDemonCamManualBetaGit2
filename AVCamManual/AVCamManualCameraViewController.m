@@ -1490,6 +1490,15 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.session];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionWasInterrupted:) name:AVCaptureSessionWasInterruptedNotification object:self.session];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionInterruptionEnded:) name:AVCaptureSessionInterruptionEndedNotification object:self.session];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(thermalStateChanged:) name:NSProcessInfoThermalStateDidChangeNotification object:nil];
+}
+
+- (void)thermalStateChanged:(NSNotification *)notification {
+  NSProcessInfoThermalState thermalState = [NSProcessInfo processInfo].thermalState;
+  if (thermalState >= NSProcessInfoThermalStateSerious) {
+  // Reduce video quality or frame rate
+  }
 }
 
 - (void)removeObservers
