@@ -424,10 +424,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     if ([self.session canAddOutput:self.movieFileOutput]) {
         [self.session addOutput:self.movieFileOutput];
         self.videoCaptureConnection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-//        self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-//        if ([self.videoCaptureConnection isVideoStabilizationSupported]) {
-            self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeCinematicExtendedEnhanced;
-//        }
+        self.videoCaptureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeCinematicExtendedEnhanced;
+
+        // Insert your code here
+        if ([self.movieFileOutput.availableVideoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
+            [self.movieFileOutput setOutputSettings:@{ AVVideoCodecKey : AVVideoCodecTypeHEVC } forConnection:self.videoCaptureConnection];
+        }
     } else {
         NSLog(@"Could not add movie file output to the session");
         self.setupResult = AVCamManualSetupResultSessionConfigurationFailed;
