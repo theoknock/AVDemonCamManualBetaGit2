@@ -13,6 +13,7 @@
 @import AVFoundation;
 @import Photos;
 @import CoreFoundation;
+@import AVKit;
 
 #import "AVCamManualCameraViewController.h"
 #import "AVCamManualPreviewView.h"
@@ -1018,7 +1019,6 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 {
     dispatch_async( self.sessionQueue, ^{
         AVCaptureDevice *device = self.videoDevice;
-        
         NSError *error = nil;
         if ( [device lockForConfiguration:&error] ) {
             if ( focusMode != AVCaptureFocusModeLocked && device.isFocusPointOfInterestSupported && [device isFocusModeSupported:focusMode] ) {
@@ -1257,25 +1257,43 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     }
 }
 
+- (IBAction)lockWhiteBalanceGainsConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
+    });
+}
+
 - (void)setWhiteBalanceGains:(AVCaptureWhiteBalanceGains)gains
 {
-    NSError *error = nil;
-    
-    if ( [self.videoDevice lockForConfiguration:&error] ) {
+//    NSError *error = nil;
+//    
+//    if ( [self.videoDevice lockForConfiguration:&error] ) {
         AVCaptureWhiteBalanceGains normalizedGains = [self normalizedGains:gains]; // Conversion can yield out-of-bound values, cap to limits
         [self.videoDevice setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains:normalizedGains completionHandler:nil];
-        [self.videoDevice unlockForConfiguration];
-    }
-    else {
-        if (![self.videoDevice lockForConfiguration:&error]) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-            [alert addAction:okAction];
-            [self presentViewController:alert animated:YES completion:nil];
-        }
-    }
+//        [self.videoDevice unlockForConfiguration];
+//    }
+//    else {
+//        if (![self.videoDevice lockForConfiguration:&error]) {
+//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+//                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+//                                                                    preferredStyle:UIAlertControllerStyleAlert];
+//            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+//            [alert addAction:okAction];
+//            [self presentViewController:alert animated:YES completion:nil];
+//        }
+//    }
 }
 
 - (IBAction)changeTemperature:(id)sender
@@ -1305,6 +1323,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     AVCaptureWhiteBalanceTemperatureAndTintValues whiteBalanceTemperatureAndTint = [self.videoDevice temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoDevice.deviceWhiteBalanceGains];
     self.tintSlider.value = property_control_value(whiteBalanceTemperatureAndTint.tint, -150.f, 150.f, 1.f, 0.f);
     self.temperatureSlider.value = property_control_value(whiteBalanceTemperatureAndTint.temperature, 3000.f, 8000.f, 1.f, 0.f);
+}
+
+- (IBAction)unlockWhiteBalanceGainsConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        [self.videoDevice unlockForConfiguration];
+    });
 }
 
 - (AVCaptureWhiteBalanceGains)normalizedGains:(AVCaptureWhiteBalanceGains)gains
