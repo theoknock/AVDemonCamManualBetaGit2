@@ -467,14 +467,17 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 {
     [super viewWillAppear:animated];
     
-    dispatch_async( self.sessionQueue, ^{
+    
         switch ( self.setupResult )
         {
+                [self addObservers];
             case AVCamManualSetupResultSuccess:
             {
-                [self addObservers];
-                [self.session startRunning];
-                self.sessionRunning = self.session.isRunning;
+                dispatch_async( self.sessionQueue, ^{
+                    
+                    [self.session startRunning];
+                    self.sessionRunning = self.session.isRunning;
+                });
                 
                 break;
             }
@@ -506,15 +509,15 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 break;
             }
         }
-    } );
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    [self removeObservers];
     dispatch_async( self.sessionQueue, ^{
         if ( self.setupResult == AVCamManualSetupResultSuccess ) {
             [self.session stopRunning];
-            [self removeObservers];
+            
         }
     } );
     
