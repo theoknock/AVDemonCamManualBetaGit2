@@ -72,7 +72,7 @@ typedef NS_ENUM( NSInteger, AVCamManualSetupResult ) {
 
 @property (strong, nonatomic) UILongPressGestureRecognizer *rescaleLensPositionSliderValueRangeGestureRecognizer;
 
-@property (nonatomic) NSArray *whiteBalanceModes;
+@property (nonatomic) NSArray<NSNumber *> * whiteBalanceModes;
 @property (weak, nonatomic) IBOutlet UIView *manualHUDWhiteBalanceView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *whiteBalanceModeControl;
 @property (weak, nonatomic) IBOutlet UISlider *temperatureSlider;
@@ -1298,40 +1298,81 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     });
 }
 
+- (IBAction)lockWhiteBalanceModeConfiguration:(UISegmentedControl *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.temperatureSlider setEnabled:self.whiteBalanceModeControl.selectedSegmentIndex == 1];
+                [self.tintSlider setEnabled:self.whiteBalanceModeControl.selectedSegmentIndex == 1];
+            });
+            } else {
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
+    });
+}
 
-- (IBAction)changeWhiteBalanceMode:(id)sender
-{
-    UISegmentedControl *control = sender;
-    AVCaptureWhiteBalanceMode mode = (AVCaptureWhiteBalanceMode)[self.whiteBalanceModes[control.selectedSegmentIndex] intValue];
-    NSError *error = nil;
-    
-    if ( [self.videoDevice lockForConfiguration:&error] ) {
-        if ( [self.videoDevice isWhiteBalanceModeSupported:mode] ) {
-            self.videoDevice.whiteBalanceMode = mode;
-        }
-        else {
-            NSLog( @"White balance mode %@ is not supported. White balance mode is %@.", [self stringFromWhiteBalanceMode:mode], [self stringFromWhiteBalanceMode:self.videoDevice.whiteBalanceMode] );
-            self.whiteBalanceModeControl.selectedSegmentIndex = [self.whiteBalanceModes indexOfObject:@(self.videoDevice.whiteBalanceMode)];
-        }
-        [self.videoDevice unlockForConfiguration];
+- (IBAction)changeWhiteBalanceMode:(UISegmentedControl *)sender {
+    AVCaptureWhiteBalanceMode mode = (AVCaptureWhiteBalanceMode)(self.whiteBalanceModes[sender.selectedSegmentIndex]).integerValue;
+   
+    if ( [self.videoDevice isWhiteBalanceModeSupported:mode] ) {
+        self.videoDevice.whiteBalanceMode = mode;
     }
     else {
-        if (![self.videoDevice lockForConfiguration:&error]) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-            [alert addAction:okAction];
-            [self presentViewController:alert animated:YES completion:nil];
-        }
+        NSLog( @"White balance mode %@ is not supported. White balance mode is %@.", [self stringFromWhiteBalanceMode:mode], [self stringFromWhiteBalanceMode:self.videoDevice.whiteBalanceMode] );
+        self.whiteBalanceModeControl.selectedSegmentIndex = [self.whiteBalanceModes indexOfObject:@(self.videoDevice.whiteBalanceMode)];
     }
 }
+
+
+//- (IBAction)changeWhiteBalanceMode:(id)sender
+//{
+//    UISegmentedControl *control = sender;
+//    AVCaptureWhiteBalanceMode mode = (AVCaptureWhiteBalanceMode)[self.whiteBalanceModes[control.selectedSegmentIndex] intValue];
+//    NSError *error = nil;
+//    
+////    if ( [self.videoDevice lockForConfiguration:&error] ) {
+//        if ( [self.videoDevice isWhiteBalanceModeSupported:mode] ) {
+//            self.videoDevice.whiteBalanceMode = mode;
+//        }
+//        else {
+//            NSLog( @"White balance mode %@ is not supported. White balance mode is %@.", [self stringFromWhiteBalanceMode:mode], [self stringFromWhiteBalanceMode:self.videoDevice.whiteBalanceMode] );
+//            self.whiteBalanceModeControl.selectedSegmentIndex = [self.whiteBalanceModes indexOfObject:@(self.videoDevice.whiteBalanceMode)];
+//        }
+////        [self.videoDevice unlockForConfiguration];
+//    }
+//    else {
+//        if (![self.videoDevice lockForConfiguration:&error]) {
+//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+//                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+//                                                                    preferredStyle:UIAlertControllerStyleAlert];
+//            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+//            [alert addAction:okAction];
+//            [self presentViewController:alert animated:YES completion:nil];
+//        }
+//    }
+//}
+
+- (IBAction)unlockWhiteBalanceModeConfiguration:(UISegmentedControl *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        [self.videoDevice unlockForConfiguration];
+    });
+}
+
 
 - (IBAction)lockWhiteBalanceGainsConfiguration:(UISlider *)sender {
     dispatch_async(self.sessionQueue, ^{
         __autoreleasing NSError *error = nil;
         if ([self.videoDevice lockForConfiguration:&error]) {
-            
+//            [self.temperatureSlider setEnabled:self.whiteBalanceModeControl.selectedSegmentIndex == 1];
+//            [self.tintSlider setEnabled:self.whiteBalanceModeControl.selectedSegmentIndex == 0];
         } else {
             if (![self.videoDevice lockForConfiguration:&error]) {
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"

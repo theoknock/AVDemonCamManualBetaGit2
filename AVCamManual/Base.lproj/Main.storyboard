@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Commit ID b6fc142" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yrk-Tw-Xac">
-                                <rect key="frame" x="292.33333333333331" y="807" width="84.666666666666686" height="11"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Commit ID 1ddc71f" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yrk-Tw-Xac">
+                                <rect key="frame" x="294.33333333333331" y="807" width="82.666666666666686" height="11"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="9"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -398,7 +398,9 @@
                                                         </segments>
                                                         <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
                                                         <connections>
-                                                            <action selector="changeWhiteBalanceMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="Men-d7-LUF"/>
+                                                            <action selector="changeWhiteBalanceMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="tMT-a8-r1E"/>
+                                                            <action selector="lockWhiteBalanceModeConfiguration:" destination="zFy-Vn-e8f" eventType="valueChanged" id="CQF-Cz-gnw"/>
+                                                            <action selector="unlockWhiteBalanceModeConfiguration:" destination="zFy-Vn-e8f" eventType="valueChanged" id="EHU-H9-uG1"/>
                                                         </connections>
                                                     </segmentedControl>
                                                     <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="g5Y-v1-MKt">
@@ -412,8 +414,6 @@
                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
                                                         <connections>
                                                             <action selector="changeTemperature:" destination="zFy-Vn-e8f" eventType="valueChanged" id="WCB-V6-W6N"/>
-                                                            <action selector="lockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchDown" id="eTa-bi-B7F"/>
-                                                            <action selector="unlockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="bUG-i3-IBc"/>
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="c2O-fC-f8E">
