@@ -181,7 +181,7 @@
                                                             <outletCollection property="gestureRecognizers" destination="bod-zS-Hi9" appends="YES" id="gtv-qX-gNV"/>
                                                         </connections>
                                                     </slider>
-                                                    <segmentedControl opaque="NO" multipleTouchEnabled="YES" contentMode="scaleAspectFill" verticalHuggingPriority="251" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
+                                                    <segmentedControl opaque="NO" multipleTouchEnabled="YES" contentMode="scaleAspectFill" verticalHuggingPriority="251" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
                                                         <rect key="frame" x="8" y="8" width="329" height="57"/>
                                                         <color key="backgroundColor" systemColor="systemFillColor"/>
                                                         <constraints>

@@ -556,6 +556,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.focusModeControl setSelectedSegmentIndex:0];
         [self.lensPositionSlider setEnabled:FALSE];
         
         self.lensPositionSlider.minimumValue = 0.0;
@@ -924,7 +925,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         __autoreleasing NSError *error = nil;
         if ([self.videoDevice lockForConfiguration:&error]) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.lensPositionSlider setEnabled:(self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus)];
+                [self.lensPositionSlider setEnabled:(self.videoDevice.focusMode == AVCaptureFocusModeLocked)];
             });
         } else {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
