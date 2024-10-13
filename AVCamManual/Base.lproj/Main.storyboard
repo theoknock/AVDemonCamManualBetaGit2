@@ -181,7 +181,7 @@
                                                             <outletCollection property="gestureRecognizers" destination="bod-zS-Hi9" appends="YES" id="gtv-qX-gNV"/>
                                                         </connections>
                                                     </slider>
-                                                    <segmentedControl opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
+                                                    <segmentedControl opaque="NO" multipleTouchEnabled="YES" contentMode="scaleAspectFill" verticalHuggingPriority="251" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="ktg-mg-Ejd">
                                                         <rect key="frame" x="8" y="8" width="329" height="57"/>
                                                         <color key="backgroundColor" systemColor="systemFillColor"/>
                                                         <constraints>
@@ -189,7 +189,7 @@
                                                         </constraints>
                                                         <segments>
                                                             <segment title="">
-                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical" variableValue="0.20000000000000007">
+                                                                <imageReference key="image" image="autostartstop" catalog="system" symbolScale="large" renderingMode="hierarchical" variableValue="0.0">
                                                                     <hierarchicalColors>
                                                                         <color systemColor="systemYellowColor"/>
                                                                         <color systemColor="systemBlueColor"/>
@@ -211,6 +211,8 @@
                                                         <color key="selectedSegmentTintColor" systemColor="quaternaryLabelColor"/>
                                                         <connections>
                                                             <action selector="changeFocusMode:" destination="zFy-Vn-e8f" eventType="valueChanged" id="i1z-AV-oZa"/>
+                                                            <action selector="lockFocusModeConfiguration:" destination="zFy-Vn-e8f" eventType="valueChanged" id="AAO-Ob-U4b"/>
+                                                            <action selector="unlockFocusModeConfiguration:" destination="zFy-Vn-e8f" eventType="valueChanged" id="Nyn-xg-zZi"/>
                                                         </connections>
                                                     </segmentedControl>
                                                 </subviews>
@@ -653,6 +655,7 @@
                         <outlet property="coverView" destination="vRU-a6-qp8" id="ZkZ-Rr-Xal"/>
                         <outlet property="exposureDurationSlider" destination="7R6-CN-WmZ" id="bsY-ft-Wyy"/>
                         <outlet property="exposureModeControl" destination="vvO-Ky-Czn" id="pqH-oy-Ju7"/>
+                        <outlet property="focusModeControl" destination="ktg-mg-Ejd" id="Qvb-q3-5Ig"/>
                         <outlet property="grayWorldButton" destination="1XR-0K-p1z" id="rte-6V-uYi"/>
                         <outlet property="lensPositionSlider" destination="TV0-Z0-OUU" id="LvC-Bw-06A"/>
                         <outlet property="manualHUD" destination="amH-FF-rBy" id="5GY-L7-Ddm"/>

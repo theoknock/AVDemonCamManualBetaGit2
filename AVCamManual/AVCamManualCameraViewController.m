@@ -895,24 +895,44 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 //    } );
 //}
 
-- (void)lockFocusModeConfiguration {
+//- (void)lockFocusModeConfiguration {
+//    NSLog(@"lockFocusModeConfiguration");
+//    NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
+//    dispatch_async(self.sessionQueue, ^{
+//        NSError *error = nil;
+//        if ([self.videoDevice lockForConfiguration:&error]) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self.lensPositionSlider setEnabled:self.videoDevice.focusMode == AVCaptureFocusModeLocked];
+//            });
+//        } else {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+//                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+//                                                                        preferredStyle:UIAlertControllerStyleAlert];
+//                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+//                [alert addAction:okAction];
+//                [self presentViewController:alert animated:YES completion:nil];
+//            });
+//        }
+//    });
+//}
+
+- (IBAction)lockFocusModeConfiguration:(UISegmentedControl *)sender {
     NSLog(@"lockFocusModeConfiguration");
-    NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
+
     dispatch_async(self.sessionQueue, ^{
-        NSError *error = nil;
+        __autoreleasing NSError *error = nil;
         if ([self.videoDevice lockForConfiguration:&error]) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.lensPositionSlider setEnabled:self.videoDevice.focusMode == AVCaptureFocusModeLocked];
+                [self.lensPositionSlider setEnabled:(self.videoDevice.focusMode == AVCaptureFocusModeContinuousAutoFocus)];
             });
         } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-                [alert addAction:okAction];
-                [self presentViewController:alert animated:YES completion:nil];
-            });
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     });
 }
@@ -921,22 +941,22 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 - (IBAction)changeFocusMode:(UISegmentedControl *)sender
 {
     NSInteger position = self.lensPositionSlider.value;
+    BOOL selected = [self.focusModeControl selectedSegmentIndex] == 0;
     dispatch_async(self.sessionQueue, ^{
         NSLog(@"changeFocusMode");
         NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
-        [self lockFocusModeConfiguration];
         
         AVCaptureFocusMode mode = (AVCaptureFocusMode)self.videoDevice.focusMode;
         if (mode == AVCaptureFocusModeLocked) {
             [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [sender setSelectedSegmentIndex:0];
-            });
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [sender setSelectedSegmentIndex:0];
+//            });
         } else if (mode == AVCaptureFocusModeContinuousAutoFocus) {
             [self.videoDevice setFocusModeLockedWithLensPosition:position completionHandler:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [sender setSelectedSegmentIndex:1];
-            });
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [sender setSelectedSegmentIndex:1];
+//            });
         }
         NSLog(@"NEW self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
         //        }
@@ -944,17 +964,25 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
         //            NSLog( @"Focus mode %@ is not supported. Focus mode is %@.", [self stringFromFocusMode:mode], [self stringFromFocusMode:self.videoDevice.focusMode] );
         //            self.focusModeControl.selectedSegmentIndex = [self.focusModes indexOfObject:@(self.videoDevice.focusMode)];
         //        }
-        [self unlockFocusModeConfiguration];
     });
 }
 
-- (void)unlockFocusModeConfiguration {
-    NSLog(@"unlockFocusModeConfiguration");
+- (IBAction)unlockFocusModeConfiguration:(UISegmentedControl *)sender {
+        NSLog(@"unlockFocusModeConfiguration");
     
-    dispatch_async(self.sessionQueue, ^{
-        [self.videoDevice unlockForConfiguration];
-    });
+        dispatch_async(self.sessionQueue, ^{
+            [self.videoDevice unlockForConfiguration];
+        });
 }
+
+
+//- (void)unlockFocusModeConfiguration {
+//    NSLog(@"unlockFocusModeConfiguration");
+//    
+//    dispatch_async(self.sessionQueue, ^{
+//        [self.videoDevice unlockForConfiguration];
+//    });
+//}
 
 
 #pragma mark Lens Position Configuration
@@ -1218,7 +1246,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                                                                         preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
                 [alert addAction:okAction];
-                [self presentViewController:alert animated:YES completion:nil];
+                [(AVCamManualCameraViewController *)(alert.parentViewController) presentViewController:alert animated:YES completion:nil];
             });
         }];
     }
