@@ -467,12 +467,11 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 {
     [super viewWillAppear:animated];
     
-    
     switch ( self.setupResult )
     {
-            [self addObservers];
         case AVCamManualSetupResultSuccess:
         {
+            [self addObservers];
             dispatch_async( self.sessionQueue, ^{
                 
                 [self.session startRunning];
