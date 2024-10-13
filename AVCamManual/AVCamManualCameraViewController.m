@@ -1172,7 +1172,7 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeTorchLevel:(UISlider *)sender {
     
-    ^ (__autoreleasing NSError ** error){
+    ^ (NSError ** error){
         NSError * outError = *error;
         ((((([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious)) && !outError)
           && ^ unsigned long {
