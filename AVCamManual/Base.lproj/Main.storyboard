@@ -309,6 +309,8 @@
                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
                                                         <connections>
                                                             <action selector="changeISO:" destination="zFy-Vn-e8f" eventType="valueChanged" id="8aT-Q3-NNU"/>
+                                                            <action selector="lockISOConfiguration:" destination="zFy-Vn-e8f" eventType="touchDown" id="fiB-kO-m5N"/>
+                                                            <action selector="unlockISOConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="6nE-Re-8Tv"/>
                                                         </connections>
                                                     </slider>
                                                 </subviews>

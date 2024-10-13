@@ -1187,33 +1187,48 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     });
 }
 
-
+- (IBAction)lockISOConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
+        __autoreleasing NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            
+        } else {
+            if (![self.videoDevice lockForConfiguration:&error]) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for ISO configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
+    });
+}
 
 - (IBAction)changeISO:(UISlider *)sender
 {
     NSError *error = nil;
+    @try {
+        [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:control_property_value(sender.value, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f) completionHandler:nil];
+    } @catch (NSException *exception) {
+        [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:AVCaptureISOCurrent completionHandler:^(CMTime syncTime) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        }];
+    }
     
-    if ( [self.videoDevice lockForConfiguration:&error] ) {
-        @try {
-            [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:control_property_value(sender.value, self.videoDevice.activeFormat.minISO, self.videoDevice.activeFormat.maxISO, 1.f, 0.f) completionHandler:nil];
-        } @catch (NSException *exception) {
-            [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:AVCaptureISOCurrent completionHandler:nil];
-        } @finally {
-            
-        }
-        
+}
+
+- (IBAction)unlockISOConfiguration:(UISlider *)sender {
+    dispatch_async(self.sessionQueue, ^{
         [self.videoDevice unlockForConfiguration];
-    }
-    else {
-        if (![self.videoDevice lockForConfiguration:&error]) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-            [alert addAction:okAction];
-            [self presentViewController:alert animated:YES completion:nil];
-        }
-    }
+    });
 }
 
 
