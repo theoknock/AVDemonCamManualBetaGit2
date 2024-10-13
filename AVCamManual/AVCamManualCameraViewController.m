@@ -381,10 +381,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
                 [self.videoDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
                 [self.videoDevice setSmoothAutoFocusEnabled:self.videoDevice.isSmoothAutoFocusSupported];
                 [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
-//                if ([self->_videoDevice isTorchActive])
-                    [self->_videoDevice setTorchMode:0];
-//                else
-//                    [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
+                //                if ([self->_videoDevice isTorchActive])
+                [self->_videoDevice setTorchMode:0];
+                //                else
+                //                    [_videoDevice setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:nil];
             } else {
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Could not add video device input to the session" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
@@ -468,47 +468,47 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     [super viewWillAppear:animated];
     
     
-        switch ( self.setupResult )
+    switch ( self.setupResult )
+    {
+            [self addObservers];
+        case AVCamManualSetupResultSuccess:
         {
-                [self addObservers];
-            case AVCamManualSetupResultSuccess:
-            {
-                dispatch_async( self.sessionQueue, ^{
-                    
-                    [self.session startRunning];
-                    self.sessionRunning = self.session.isRunning;
-                });
+            dispatch_async( self.sessionQueue, ^{
                 
-                break;
-            }
-            case AVCamManualSetupResultCameraNotAuthorized:
-            {
-                dispatch_async( dispatch_get_main_queue(), ^{
-                    NSString *message = NSLocalizedString( @"AVCamManual doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCamManual" message:message preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                    [alertController addAction:cancelAction];
-                    
-                    UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:nil];
-                    }];
-                    [alertController addAction:settingsAction];
-                    [self presentViewController:alertController animated:YES completion:nil];
-                } );
-                break;
-            }
-            case AVCamManualSetupResultSessionConfigurationFailed:
-            {
-                dispatch_async( dispatch_get_main_queue(), ^{
-                    NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVDemonCamManual" message:message preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                    [alertController addAction:cancelAction];
-                    [self presentViewController:alertController animated:YES completion:nil];
-                } );
-                break;
-            }
+                [self.session startRunning];
+                self.sessionRunning = self.session.isRunning;
+            });
+            
+            break;
         }
+        case AVCamManualSetupResultCameraNotAuthorized:
+        {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                NSString *message = NSLocalizedString( @"AVCamManual doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCamManual" message:message preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                [alertController addAction:cancelAction];
+                
+                UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:nil];
+                }];
+                [alertController addAction:settingsAction];
+                [self presentViewController:alertController animated:YES completion:nil];
+            } );
+            break;
+        }
+        case AVCamManualSetupResultSessionConfigurationFailed:
+        {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVDemonCamManual" message:message preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                [alertController addAction:cancelAction];
+                [self presentViewController:alertController animated:YES completion:nil];
+            } );
+            break;
+        }
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -899,19 +899,20 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
     NSLog(@"lockFocusModeConfiguration");
     NSLog(@"self.videoDevice.focusMode == %ld", (long)self.videoDevice.focusMode);
     dispatch_async(self.sessionQueue, ^{
-        __autoreleasing NSError *error = nil;
+        NSError *error = nil;
         if ([self.videoDevice lockForConfiguration:&error]) {
-            // Empty block—no action taken when the lock is successful.
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.lensPositionSlider setEnabled:self.videoDevice.focusMode == AVCaptureFocusModeLocked];
+            });
         } else {
-            if (![self.videoDevice lockForConfiguration:&error]) {
-                // This second attempt is unnecessary.
+            dispatch_async(dispatch_get_main_queue(), ^{
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
                                                                                message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
                                                                         preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
                 [alert addAction:okAction];
                 [self presentViewController:alert animated:YES completion:nil];
-            }
+            });
         }
     });
 }
@@ -1141,20 +1142,43 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 }
 
 - (IBAction)changeTorchLevel:(UISlider *)sender {
-    __autoreleasing NSError *error;
-    if ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious) {
-        if (sender.value != 0)
-            [self->_videoDevice setTorchModeOnWithLevel:sender.value error:&error];
-        else
-            [self->_videoDevice setTorchMode:AVCaptureTorchModeOff];
-    } else {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning"
-                                                                       message:[NSString stringWithFormat:@"Unable to adjust torch level; thermal state: %lu", (unsigned long)[[NSProcessInfo processInfo] thermalState]]
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:okAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    }
+    
+    ^ (__autoreleasing NSError ** error){
+        NSError * outError = *error;
+        ((((([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious)) && !outError)
+          && ^ unsigned long {
+            if (sender.value != 0)
+                [self->_videoDevice setTorchModeOnWithLevel:sender.value error:nil];
+            else
+                [self->_videoDevice setTorchMode:AVCaptureTorchModeOff];
+            return 1UL;
+        }())
+         || ^ unsigned long {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning"
+                                                                           message:[NSString stringWithFormat:@"Unable to adjust torch level; thermal state: %lu", (unsigned long)[[NSProcessInfo processInfo] thermalState]]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+            @throw [NSException exceptionWithName:outError.domain reason:outError.localizedFailureReason userInfo:@{@"Error Code" : @(outError.code)}]; return 1UL; }());
+    }(({ __autoreleasing NSError * error = nil; &error; }));
+    
+    
+    
+//    __autoreleasing NSError *error;
+//    if ([[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateCritical || [[NSProcessInfo processInfo] thermalState] != NSProcessInfoThermalStateSerious) {
+//        if (sender.value != 0)
+//            [self->_videoDevice setTorchModeOnWithLevel:sender.value error:&error];
+//        else
+//            [self->_videoDevice setTorchMode:AVCaptureTorchModeOff];
+//    } else {
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning"
+//                                                                       message:[NSString stringWithFormat:@"Unable to adjust torch level; thermal state: %lu", (unsigned long)[[NSProcessInfo processInfo] thermalState]]
+//                                                                preferredStyle:UIAlertControllerStyleAlert];
+//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+//        [alert addAction:okAction];
+//        [self presentViewController:alert animated:YES completion:nil];
+//    }
 }
 
 - (IBAction)unlockTorchLevelConfiguration:(UISlider *)sender {
@@ -1214,13 +1238,12 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)changeVideoZoomFactor:(UISlider *)sender {
     dispatch_async(self.sessionQueue, ^{
-        NSError *error = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
-            ^{
+            ^ (NSError * error){
                 ((((![self.videoDevice isRampingVideoZoom] && (sender.value != self.videoDevice.videoZoomFactor)) && !error)
                   && ^ unsigned long { [self.videoDevice setVideoZoomFactor:control_property_value(sender.value, self.videoDevice.minAvailableVideoZoomFactor, self.videoDevice.activeFormat.videoMaxZoomFactor, kVideoZoomFactorPowerCoefficient, 0.f)]; return 1UL; }())
                  || ^ unsigned long { @throw [NSException exceptionWithName:error.domain reason:error.localizedFailureReason userInfo:@{@"Error Code" : @(error.code)}]; return 1UL; }());
-            }();
+            }(({ NSError *error = nil; error; }));
         });
     });
 }
@@ -1280,23 +1303,23 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (void)setWhiteBalanceGains:(AVCaptureWhiteBalanceGains)gains
 {
-//    NSError *error = nil;
-//    
-//    if ( [self.videoDevice lockForConfiguration:&error] ) {
-        AVCaptureWhiteBalanceGains normalizedGains = [self normalizedGains:gains]; // Conversion can yield out-of-bound values, cap to limits
-        [self.videoDevice setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains:normalizedGains completionHandler:nil];
-//        [self.videoDevice unlockForConfiguration];
-//    }
-//    else {
-//        if (![self.videoDevice lockForConfiguration:&error]) {
-//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
-//                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
-//                                                                    preferredStyle:UIAlertControllerStyleAlert];
-//            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-//            [alert addAction:okAction];
-//            [self presentViewController:alert animated:YES completion:nil];
-//        }
-//    }
+    //    NSError *error = nil;
+    //
+    //    if ( [self.videoDevice lockForConfiguration:&error] ) {
+    AVCaptureWhiteBalanceGains normalizedGains = [self normalizedGains:gains]; // Conversion can yield out-of-bound values, cap to limits
+    [self.videoDevice setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains:normalizedGains completionHandler:nil];
+    //        [self.videoDevice unlockForConfiguration];
+    //    }
+    //    else {
+    //        if (![self.videoDevice lockForConfiguration:&error]) {
+    //            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+    //                                                                           message:[NSString stringWithFormat:@"Could not lock device for configuration: %@", error.localizedDescription]
+    //                                                                    preferredStyle:UIAlertControllerStyleAlert];
+    //            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    //            [alert addAction:okAction];
+    //            [self presentViewController:alert animated:YES completion:nil];
+    //        }
+    //    }
 }
 
 - (IBAction)changeTemperature:(id)sender
@@ -1321,11 +1344,15 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 
 - (IBAction)lockWithGrayWorld:(id)sender
 {
+    [self lockWhiteBalanceGainsConfiguration:sender];
+    
     [self setWhiteBalanceGains:self.videoDevice.grayWorldDeviceWhiteBalanceGains];
     
     AVCaptureWhiteBalanceTemperatureAndTintValues whiteBalanceTemperatureAndTint = [self.videoDevice temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoDevice.deviceWhiteBalanceGains];
     self.tintSlider.value = property_control_value(whiteBalanceTemperatureAndTint.tint, -150.f, 150.f, 1.f, 0.f);
     self.temperatureSlider.value = property_control_value(whiteBalanceTemperatureAndTint.temperature, 3000.f, 8000.f, 1.f, 0.f);
+    
+    [self unlockWhiteBalanceGainsConfiguration:sender];
 }
 
 - (IBAction)unlockWhiteBalanceGainsConfiguration:(UISlider *)sender {
@@ -1524,10 +1551,10 @@ static const float kExposureDurationPower = 5.f; // Higher numbers will give the
 }
 
 - (void)thermalStateChanged:(NSNotification *)notification {
-  NSProcessInfoThermalState thermalState = [NSProcessInfo processInfo].thermalState;
-  if (thermalState >= NSProcessInfoThermalStateSerious) {
-  // Reduce video quality or frame rate
-  }
+    NSProcessInfoThermalState thermalState = [NSProcessInfo processInfo].thermalState;
+    if (thermalState >= NSProcessInfoThermalStateSerious) {
+        // Reduce video quality or frame rate
+    }
 }
 
 - (void)removeObservers

@@ -408,8 +408,8 @@
                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor"/>
                                                         <connections>
                                                             <action selector="changeTemperature:" destination="zFy-Vn-e8f" eventType="valueChanged" id="WCB-V6-W6N"/>
-                                                            <action selector="lockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="BAV-XB-NoW"/>
                                                             <action selector="lockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchDown" id="eTa-bi-B7F"/>
+                                                            <action selector="unlockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="bUG-i3-IBc"/>
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="c2O-fC-f8E">
@@ -425,7 +425,7 @@
                                                         <connections>
                                                             <action selector="changeTint:" destination="zFy-Vn-e8f" eventType="valueChanged" id="Cua-i3-F3g"/>
                                                             <action selector="lockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchDown" id="5md-kp-pca"/>
-                                                            <action selector="lockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="9tB-mv-mhm"/>
+                                                            <action selector="unlockWhiteBalanceGainsConfiguration:" destination="zFy-Vn-e8f" eventType="touchUpInside" id="w26-VI-Ofg"/>
                                                         </connections>
                                                     </slider>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1XR-0K-p1z" userLabel="GrayWorld Button">
